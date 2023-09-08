@@ -1,11 +1,10 @@
-package com.ewhatever.qna.common;
+package com.ewhatever.qna.common.Base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,17 +16,14 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
-    @NotNull
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdDate;
 
-    @NotNull
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    @NotNull
-    @ColumnDefault("'active'")
+    @Column(columnDefinition = "varchar(10) default 'active'")
+    @Setter
     private String status;
-
 }

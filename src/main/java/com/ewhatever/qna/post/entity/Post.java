@@ -1,6 +1,6 @@
 package com.ewhatever.qna.post.entity;
 
-import com.ewhatever.qna.common.BaseEntity;
+import com.ewhatever.qna.common.Base.BaseEntity;
 import com.ewhatever.qna.common.enums.Category;
 import com.ewhatever.qna.user.entity.User;
 import jakarta.persistence.*;

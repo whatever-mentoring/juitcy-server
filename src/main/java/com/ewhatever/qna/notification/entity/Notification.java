@@ -1,6 +1,6 @@
 package com.ewhatever.qna.notification.entity;
 
-import com.ewhatever.qna.common.BaseEntity;
+import com.ewhatever.qna.common.Base.BaseEntity;
 import com.ewhatever.qna.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
