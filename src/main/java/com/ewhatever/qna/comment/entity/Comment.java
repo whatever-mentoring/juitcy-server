@@ -1,6 +1,6 @@
 package com.ewhatever.qna.comment.entity;
 
-import com.ewhatever.qna.common.BaseEntity;
+import com.ewhatever.qna.common.Base.BaseEntity;
 import com.ewhatever.qna.post.entity.Post;
 import com.ewhatever.qna.user.entity.User;
 import jakarta.persistence.*;
@@ -23,7 +23,7 @@ public class Comment extends BaseEntity {
     private Long commentIdx;
 
     @NotNull
-    @Size(max = 500)
+    @Size(max = 1500)
     private String content;
 
     @NotNull
@@ -35,6 +35,4 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_idx")
     private User writer;
-
-
 }

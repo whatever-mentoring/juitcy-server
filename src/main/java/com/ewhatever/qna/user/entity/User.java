@@ -1,6 +1,6 @@
 package com.ewhatever.qna.user.entity;
 
-import com.ewhatever.qna.common.BaseEntity;
+import com.ewhatever.qna.common.Base.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
