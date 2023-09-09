@@ -10,12 +10,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class Answer extends BaseEntity {
 
     @Id
@@ -23,7 +25,7 @@ public class Answer extends BaseEntity {
     private Long answerIdx;
 
     @NotNull
-    @Size(min = 30, max = 1000)
+    @Size(min = 30, max = 3000)
     private String content;
 
     @NotNull

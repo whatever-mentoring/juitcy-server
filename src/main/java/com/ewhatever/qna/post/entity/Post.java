@@ -11,12 +11,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
+@Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@DynamicInsert
 public class Post extends BaseEntity {
 
     @Id
@@ -24,7 +26,7 @@ public class Post extends BaseEntity {
     private Long postIdx;
 
     @NotNull
-    @Size(min = 30, max = 1000)
+    @Size(min = 30, max = 3000)
     private String question;
 
     @NotNull
