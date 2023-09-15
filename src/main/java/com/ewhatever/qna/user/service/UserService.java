@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ewhatever.qna.common.Base.BaseResponseStatus.COMMON_NOT_FOUND;
+import static com.ewhatever.qna.common.Base.BaseResponseStatus.INVALID_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class UserService {
 
     // TODO : 이거 BaseResponse 말고 객체 반환하도록 수정
     public BaseResponse<?> getProfile() throws BaseException {
-        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(COMMON_NOT_FOUND));
+        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
         if(user.getRole().equals("SINY")) return getSinyProfile(user);
         else return getJunyProfile(user);
     }
@@ -41,7 +41,7 @@ public class UserService {
     // TODO : code duplication 해결
     // TODO : getPageable 메소드 호출
     public Page<GetSinyAnswerResponse> getMyAnswers(String status, int requestPageNum) throws BaseException {
-        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(COMMON_NOT_FOUND));
+        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
         List<Sort.Order> sorts = new ArrayList<>();
         Boolean isJuicy;
         if(status.equals("completed")) {//쥬시 완료
@@ -58,7 +58,7 @@ public class UserService {
     }
 
     public Page<GetJunyQuestionResponse> getMyQuestions(String status, int requestPageNum) throws BaseException {
-        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(COMMON_NOT_FOUND));
+        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
         List<Sort.Order> sorts = new ArrayList<>();
         Boolean isJuicy;
         if(status.equals("completed")) {//쥬시 완료
@@ -75,13 +75,13 @@ public class UserService {
     }
 
     public Page<GetCommentResponse> getMyComments(int requestPageNum) throws BaseException {
-        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(COMMON_NOT_FOUND));
+        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
         Pageable pageable = getPageable(requestPageNum, 10, "created_date");
         return commentRepository.findByWriter_UserIdxAndStatusEquals(user.getUserIdx(), "active", pageable).map(GetCommentResponse::fromComment);
     }
 
     public Page<GetScrapResponse> getMyScraps(int requestPageNum) throws BaseException {
-        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(COMMON_NOT_FOUND));
+        User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
         Pageable pageable = getPageable(requestPageNum, 10, "created_date");
         return scrapRepository.findByUser_UserIdxAndStatusEquals(user.getUserIdx(), "active", pageable).map(GetScrapResponse::fromScrap);
 

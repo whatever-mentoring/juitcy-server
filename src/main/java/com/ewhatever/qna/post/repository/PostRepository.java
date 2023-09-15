@@ -14,4 +14,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByIsJuicy(Pageable pageable, Boolean isJuicy);
     Boolean existsByCategory(Category category);
     Page<Post> findByCategory(Category category, Pageable pageable);
+    Long countByQuestioner_UserIdxAndStatusEquals(Long userIdx, String status);
+    Page<Post> findByQuestioner_UserIdxAndIsJuicyAndStatusEquals(Long userIdx, Boolean isJuicy, String status, Pageable pageable);
 }

@@ -22,6 +22,7 @@ public enum BaseResponseStatus {
     INVALID_CATEGORY(false, 2300, "잘못된 카테고리입니다."),
 
     // user(2400-2499)
+    INVALID_USER(false, 2400, "존재하지 않는 사용자에 대한 요청입니다."),
 
 
     /**
