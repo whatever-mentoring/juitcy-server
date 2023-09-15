@@ -12,10 +12,32 @@ public enum BaseResponseStatus {
     /**
      * 2000: Request 오류
      */
+    // answer(2000-2099)
+
+    // comment(2100-2199)
+
+    // notification(2200-2299)
+
+    // post(2300-2399)
+    INVALID_CATEGORY(false, 2300, "잘못된 카테고리입니다."),
+
+    // user(2400-2499)
+
 
     /**
      * 3000: Response 오류
      */
+    // answer(3000-3099)
+
+    // comment(3100-3199)
+
+    // notification(3200-3299)
+
+    // post(3300-3399)
+    NULL_POST(false, 3300, "주씨글이 없습니다."),
+
+    // user(3400-3499)
+
 
     /**
      * 4000: DB, Server 오류
