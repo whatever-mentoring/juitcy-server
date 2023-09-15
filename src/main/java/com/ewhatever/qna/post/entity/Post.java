@@ -26,8 +26,12 @@ public class Post extends BaseEntity {
     private Long postIdx;
 
     @NotNull
+    @Size(max = 300)
+    private String title;
+
+    @NotNull
     @Size(min = 30, max = 3000)
-    private String question;
+    private String content;
 
     @NotNull
     @Enumerated(value = EnumType.ORDINAL)
@@ -47,4 +51,9 @@ public class Post extends BaseEntity {
     @ColumnDefault("0")
     @Builder.Default
     private Long commentCount = 0L;
+
+    @NotNull
+    @ColumnDefault("false")
+    @Builder.Default
+    private Boolean isJuicy = false;
 }
