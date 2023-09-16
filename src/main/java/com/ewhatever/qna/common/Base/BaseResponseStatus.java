@@ -24,6 +24,7 @@ public enum BaseResponseStatus {
 
     // user(2400-2499)
     NO_SENIOR_ROLE(false, 2400, "시니어가 아닙니다."),
+    INVALID_USER(false, 2401, "존재하지 않는 사용자에 대한 요청입니다."),
 
 
     /**

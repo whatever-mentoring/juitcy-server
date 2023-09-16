@@ -4,6 +4,7 @@ import com.ewhatever.qna.answer.dto.PostAnswerReq;
 import com.ewhatever.qna.answer.entity.Answer;
 import com.ewhatever.qna.answer.repository.AnswerRepository;
 import com.ewhatever.qna.common.Base.BaseException;
+import com.ewhatever.qna.common.enums.Role;
 import com.ewhatever.qna.post.entity.Post;
 import com.ewhatever.qna.post.repository.PostRepository;
 import com.ewhatever.qna.user.entity.User;
@@ -25,7 +26,7 @@ public class AnswerService {
         try {
             User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE);
             Post post = postRepository.findById(postAnswerReq.getPostIdx()).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
-            if (user.getRole().equals("Senior")) {//TODO: enum으로 변경
+            if (user.getRole().equals(Role.SINY)) {
                 Answer answer = Answer.builder()
                         .content(postAnswerReq.getAnswer())
                         .answerer(user)

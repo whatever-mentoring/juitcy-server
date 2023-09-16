@@ -4,6 +4,7 @@ import com.ewhatever.qna.answer.repository.AnswerRepository;
 import com.ewhatever.qna.comment.repository.CommentRepository;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
+import com.ewhatever.qna.common.enums.Role;
 import com.ewhatever.qna.post.repository.PostRepository;
 import com.ewhatever.qna.scrap.repository.ScrapRepository;
 import com.ewhatever.qna.user.dto.*;
@@ -34,7 +35,7 @@ public class UserService {
     // TODO : 이거 BaseResponse 말고 객체 반환하도록 수정
     public BaseResponse<?> getProfile() throws BaseException {
         User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
-        if(user.getRole().equals("SINY")) return getSinyProfile(user);
+        if(user.getRole().equals(Role.SINY)) return getSinyProfile(user);
         else return getJunyProfile(user);
     }
 
