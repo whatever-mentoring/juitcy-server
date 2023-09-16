@@ -1,10 +1,8 @@
 package com.ewhatever.qna.user.entity;
 
 import com.ewhatever.qna.common.Base.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.ewhatever.qna.common.enums.Role;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -34,7 +32,6 @@ public class User extends BaseEntity {
     private String provider;
 
     @NotNull
-    @Size(max = 30)
-    private String role;
-
+    @Enumerated(value = EnumType.ORDINAL)//TODO : EnumType 수정
+    private Role role;
 }
