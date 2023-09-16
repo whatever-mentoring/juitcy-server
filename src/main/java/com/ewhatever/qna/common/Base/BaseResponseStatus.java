@@ -20,9 +20,10 @@ public enum BaseResponseStatus {
 
     // post(2300-2399)
     INVALID_CATEGORY(false, 2300, "잘못된 카테고리입니다."),
+    INVALID_POST_IDX(false, 2301, "잘못된 postIdx입니다."),
 
     // user(2400-2499)
-    INVALID_USER(false, 2400, "존재하지 않는 사용자에 대한 요청입니다."),
+    NO_SENIOR_ROLE(false, 2400, "시니어가 아닙니다."),
 
 
     /**
