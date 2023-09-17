@@ -15,6 +15,7 @@ public enum BaseResponseStatus {
     // answer(2000-2099)
 
     // comment(2100-2199)
+    INVALID_COMMENT_IDX(false, 2100, "잘못된 commentIdx입니다."),
 
     // notification(2200-2299)
 
