@@ -10,7 +10,7 @@ import com.ewhatever.qna.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
-import static com.ewhatever.qna.common.Constant.ACTIVE;
+import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
 import static com.ewhatever.qna.common.enums.Role.SINY;
 
 @Service

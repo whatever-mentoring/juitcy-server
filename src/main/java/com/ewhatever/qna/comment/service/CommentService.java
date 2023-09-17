@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
-import static com.ewhatever.qna.common.Constant.INACTIVE;
+import static com.ewhatever.qna.common.Constant.Status.INACTIVE;
 
 @Service
 @RequiredArgsConstructor
