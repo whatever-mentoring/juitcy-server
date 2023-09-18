@@ -56,4 +56,10 @@ public class Post extends BaseEntity {
     @ColumnDefault("false")
     @Builder.Default
     private Boolean isJuicy = false;
+
+    public void setScrapCount(Long scrapCount) {
+        this.scrapCount = scrapCount;
+    }
 }
+
+

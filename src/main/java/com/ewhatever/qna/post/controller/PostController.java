@@ -8,8 +8,9 @@ import com.ewhatever.qna.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+
+import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
 
 @RestController
 @RequestMapping("/posts")
@@ -22,7 +23,7 @@ public class PostController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<Page<GetPostsRes>> getPosts(@PageableDefault(size = 10) Pageable page,
+    public BaseResponse<Page<GetPostsRes>> getPosts(Pageable page,
                                                     @RequestParam(required = false) String category) {
         try {
             if (category.isBlank()) { // 전체 조회
@@ -41,6 +42,20 @@ public class PostController {
     public BaseResponse<GetPostRes> getPost(@PathVariable Long postIdx, Long userIdx) { // TODO: 추후 getUserIdx로 수정
         try {
             return new BaseResponse<>(postService.getPost(postIdx, userIdx));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * [POST] 스크랩/취소
+     */
+    @ResponseBody
+    @GetMapping("/{postIdx}")
+    public BaseResponse<String> scrapPost(@PathVariable Long postIdx, Long userIdx) { // TODO: 추후 getUserIdx로 수정
+        try {
+            postService.scrapPost(postIdx, userIdx);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

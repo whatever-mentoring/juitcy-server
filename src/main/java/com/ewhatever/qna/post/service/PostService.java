@@ -6,11 +6,11 @@ import com.ewhatever.qna.comment.entity.Comment;
 import com.ewhatever.qna.comment.repository.CommentRepository;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.enums.Category;
-import com.ewhatever.qna.common.enums.Role;
 import com.ewhatever.qna.post.dto.GetPostRes;
 import com.ewhatever.qna.post.dto.GetPostsRes;
 import com.ewhatever.qna.post.entity.Post;
 import com.ewhatever.qna.post.repository.PostRepository;
+import com.ewhatever.qna.scrap.entity.Scrap;
 import com.ewhatever.qna.scrap.repository.ScrapRepository;
 import com.ewhatever.qna.user.entity.User;
 import com.ewhatever.qna.user.repository.UserRepository;
@@ -18,13 +18,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
 import static com.ewhatever.qna.common.Constant.Role.SENIOR;
 import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
+import static com.ewhatever.qna.common.Constant.Status.INACTIVE;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +40,10 @@ public class PostService {
 
     /**
      * 쥬시글 전체 목록 조회
+     *
+     * @param page
+     * @return Page<GetPostsRes>
+     * @throws BaseException
      */
     public Page<GetPostsRes> getPosts(Pageable page) throws BaseException {
         try {
@@ -53,6 +60,7 @@ public class PostService {
         }
     }
 
+    // 카드 리스트 조회
     private List<String> getCardList(Post post) {
         List<String> cardList = new ArrayList<>();
 
@@ -60,21 +68,26 @@ public class PostService {
         cardList.add(post.getContent());
         List<Answer> answers = answerRepository.findAllByPost(post);
         for (Answer answer : answers) {
-           cardList.add(answer.getContent());
+            cardList.add(answer.getContent());
         }
         return cardList;
     }
 
     /**
      * 쥬시글 카테고리 기반 목록 조회
+     *
+     * @param category
+     * @param page
+     * @return Page<GetPostsRes>
+     * @throws BaseException
      */
     public Page<GetPostsRes> getPostsByCategory(String category, Pageable page) throws BaseException {
         try {
             Category categoryName = Category.valueOf(category.toUpperCase());
-            if (categoryName != null) {
+            if (categoryName != null) { //TODO: 삭제 필요. IllegalArgumentException 처리 필요.
                 boolean postExists = postRepository.existsByCategory(categoryName);
                 if (postExists) {
-                    Page<Post> postPage = postRepository.findByCategory(categoryName, page);
+                    Page<Post> postPage = postRepository.findByCategory(categoryName, page); //TODO: 쥬시글 여부 추가
                     return postPage.map(post -> new GetPostsRes(
                             post.getCategory().name(),
                             post.getLastModifiedDate(),
@@ -93,11 +106,16 @@ public class PostService {
 
     /**
      * 쥬시글 상세 조회
+     *
+     * @param postIdx
+     * @param userIdx
+     * @return GetPostRes
+     * @throws BaseException
      */
     public GetPostRes getPost(Long postIdx, Long userIdx) throws BaseException {
         try {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
-            User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE);
+            User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             return new GetPostRes(post.getCategory().toString(), getCardList(post), post.getLastModifiedDate(),
                     post.getCommentCount(), post.getScrapCount(), isScrap(user, post), getCommentList(post, user));
 
@@ -119,7 +137,7 @@ public class PostService {
         List<Comment> comments = commentRepository.findAllByPost(post);
 
         for (Comment comment : comments) {
-            GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(getWriter(comment.getWriter().getRole()), comment.getCreatedDate(),
+            GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(getWriter(comment.getWriter().getRole().toString()), comment.getCreatedDate(),
                     comment.getContent(), isWriter(user, comment));
             commentList.add(commentDto);
         }
@@ -133,8 +151,55 @@ public class PostService {
     }
 
     // 댓글 작성자
-    private String getWriter(Role role) {
+    private String getWriter(String role) {
         if (role.equals(SENIOR)) return "익명의 시니";
         else return "익명의 쥬니";
+    }
+
+
+    /**
+     * 스크랩/취소
+     * @param postIdx
+     * @param userIdx
+     * @throws BaseException
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void scrapPost(Long postIdx, Long userIdx) throws BaseException {
+        try {
+            Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
+            User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            Boolean existsByPostAndUser = scrapRepository.existsByPostAndUser(post, user);
+
+            if (existsByPostAndUser) { // 스크랩 존재
+                Scrap scrap = scrapRepository.findByPostAndUser(post, user);
+                if (scrap.getStatus().equals(ACTIVE)) { // ACTIVE -> INACTIVE
+                    Long currentScrapCount = Optional.ofNullable(post.getScrapCount()).orElse(0L);
+                    if (currentScrapCount > 0) {
+                        post.setScrapCount(currentScrapCount - 1L);
+                    } else throw new BaseException(ZERO_SCRAP_COUNT);
+                    scrap.setStatus(INACTIVE);
+
+                } else { // INACTIVE -> ACTIVE
+                    post.setScrapCount(post.getScrapCount() + 1L);
+                    scrap.setStatus(ACTIVE);
+
+                }
+                postRepository.save(post);
+                scrapRepository.save(scrap);
+            } else {// 스크랩 X -> 스크랩 생성(ACTIVE)
+                Scrap newScrap = Scrap.builder()
+                        .post(post)
+                        .user(user)
+                        .build();
+                post.setScrapCount(post.getScrapCount() + 1L);
+
+                scrapRepository.save(newScrap);
+                postRepository.save(post);
+            }
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 }

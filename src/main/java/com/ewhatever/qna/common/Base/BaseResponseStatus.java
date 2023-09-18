@@ -30,6 +30,9 @@ public enum BaseResponseStatus {
 
     // question(2500-2501)
 
+    // scrap(2600-2699)
+    ZERO_SCRAP_COUNT(false, 2600, "이미 스크랩수가 0입니다."),
+
     /**
      * 3000: Response 오류
      */
@@ -45,6 +48,8 @@ public enum BaseResponseStatus {
     // user(3400-3499)
 
     // question(3500-3599)
+
+    // scrap(3600-3699)
 
     /**
      * 4000: DB, Server 오류
