@@ -40,7 +40,6 @@ public class PostService {
 
     /**
      * 쥬시글 전체 목록 조회
-     *
      * @param page
      * @return Page<GetPostsRes>
      * @throws BaseException
@@ -49,7 +48,7 @@ public class PostService {
         try {
             Page<Post> postPage = postRepository.findAllByIsJuicy(page, true); //주씨글 여부 컬럼으로 찾기
             return postPage.map(post -> new GetPostsRes(
-                    post.getCategory().name(),
+                    post.getCategory().toString(),
                     post.getLastModifiedDate(),
                     post.getScrapCount(),
                     post.getCommentCount(),
@@ -75,7 +74,6 @@ public class PostService {
 
     /**
      * 쥬시글 카테고리 기반 목록 조회
-     *
      * @param category
      * @param page
      * @return Page<GetPostsRes>
@@ -84,9 +82,9 @@ public class PostService {
     public Page<GetPostsRes> getPostsByCategory(String category, Pageable page) throws BaseException {
         try {
             Category categoryName = Category.valueOf(category.toUpperCase());
-            boolean postExists = postRepository.existsByCategory(categoryName);
+            boolean postExists = postRepository.existsByCategoryAndIsJuicy(categoryName, true);
             if (postExists) {
-                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicy(categoryName, page);
+                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicy(categoryName, true, page);
                 return postPage.map(post -> new GetPostsRes(
                         post.getCategory().name(),
                         post.getLastModifiedDate(),
@@ -106,7 +104,6 @@ public class PostService {
 
     /**
      * 쥬시글 상세 조회
-     *
      * @param postIdx
      * @param userIdx
      * @return GetPostRes

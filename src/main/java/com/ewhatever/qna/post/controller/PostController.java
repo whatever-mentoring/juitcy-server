@@ -23,8 +23,7 @@ public class PostController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<Page<GetPostsRes>> getPosts(Pageable page,
-                                                    @RequestParam(required = false) String category) {
+    public BaseResponse<Page<GetPostsRes>> getPosts(Pageable page, @RequestParam(required = false) String category) {
         try {
             if (category.isBlank()) { // 전체 조회
                 return new BaseResponse<>(postService.getPosts(page));
@@ -51,7 +50,7 @@ public class PostController {
      * [POST] 스크랩/취소
      */
     @ResponseBody
-    @GetMapping("/{postIdx}")
+    @PostMapping("/{postIdx}")
     public BaseResponse<String> scrapPost(@PathVariable Long postIdx, Long userIdx) { // TODO: 추후 getUserIdx로 수정
         try {
             postService.scrapPost(postIdx, userIdx);

@@ -43,11 +43,12 @@ public enum BaseResponseStatus {
     // notification(3200-3299)
 
     // post(3300-3399)
-    NULL_POST(false, 3300, "주씨글이 없습니다."),
+    NULL_POST(false, 3300, "쥬시글이 없습니다."),
 
     // user(3400-3499)
 
     // question(3500-3599)
+    NULL_QUESTION(false, 3500, "질문이 없습니다."),
 
     // scrap(3600-3699)
 

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByIsJuicy(Pageable pageable, Boolean isJuicy);
-    Boolean existsByCategory(Category category);
-    Page<Post> findAllByCategoryAndIsJuicy(Category category, Pageable pageable);
+    Boolean existsByCategoryAndIsJuicy(Category category, Boolean isJuicy);
+    Page<Post> findAllByCategoryAndIsJuicy(Category category, Boolean isJuicy, Pageable pageable);
     Long countByQuestioner_UserIdxAndStatusEquals(Long userIdx, String status);
     Page<Post> findByQuestioner_UserIdxAndIsJuicyAndStatusEquals(Long userIdx, Boolean isJuicy, String status, Pageable pageable);
 }
