@@ -51,7 +51,7 @@ public class PostController {
      * [POST] 스크랩/취소
      */
     @ResponseBody
-    @GetMapping("/{postIdx}")
+    @PostMapping("/{postIdx}")
     public BaseResponse<String> scrapPost(@PathVariable Long postIdx, Long userIdx) { // TODO: 추후 getUserIdx로 수정
         try {
             postService.scrapPost(postIdx, userIdx);
