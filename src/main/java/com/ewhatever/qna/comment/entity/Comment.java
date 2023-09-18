@@ -35,4 +35,8 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_idx")
     private User writer;
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

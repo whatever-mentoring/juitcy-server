@@ -1,11 +1,13 @@
 package com.ewhatever.qna.comment.controller;
 
 import com.ewhatever.qna.comment.dto.PostCommentReq;
+import com.ewhatever.qna.comment.dto.UpdateCommentReq;
 import com.ewhatever.qna.comment.service.CommentService;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
 import com.ewhatever.qna.common.Base.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.persister.entity.mutation.UpdateCoordinator;
 import org.springframework.web.bind.annotation.*;
 
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
@@ -21,6 +23,13 @@ public class CommentController {
     @PostMapping
     public BaseResponse<String> addComment(@RequestBody PostCommentReq postCommentReq) throws BaseException {
         commentService.addComment(postCommentReq);
+        return new BaseResponse<>(SUCCESS);
+    }
+
+    @ResponseBody
+    @PatchMapping("/{commentIdx}")
+    public BaseResponse<String> updateComment(@PathVariable Long commentIdx, @RequestBody UpdateCommentReq updateCommentReq) throws BaseException {
+        commentService.updateComment(commentIdx, updateCommentReq);
         return new BaseResponse<>(SUCCESS);
     }
 

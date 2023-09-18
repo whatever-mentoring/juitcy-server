@@ -60,6 +60,8 @@ public class Post extends BaseEntity {
     public void setScrapCount(Long scrapCount) {
         this.scrapCount = scrapCount;
     }
+
+    public void setCommentCount(Long commentCount) { this.commentCount = commentCount; }
 }
 
 
