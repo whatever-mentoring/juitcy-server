@@ -26,7 +26,7 @@ public class QuestionService {
      */
     public void addQuestion(Long userIdx, PostQuestionReq postQuestionReq) throws BaseException {
         try {
-            User questioner = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE);
+            User questioner = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Category category = Category.valueOf(postQuestionReq.getCategory());
 
             if (questioner.getRole().equals(SINY)) {

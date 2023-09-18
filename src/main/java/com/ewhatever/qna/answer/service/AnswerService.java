@@ -24,7 +24,7 @@ public class AnswerService {
      */
     public void addAnswer(Long userIdx, PostAnswerReq postAnswerReq) throws BaseException {
         try {
-            User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE);
+            User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Post post = postRepository.findById(postAnswerReq.getPostIdx()).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
             if (user.getRole().equals(Role.SINY)) {
                 Answer answer = Answer.builder()
