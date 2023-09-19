@@ -25,8 +25,8 @@ public class GetJunyQuestionResponse {
         LocalDate targetDate = post.getCreatedDate().toLocalDate().plusDays(3);
         LocalDateTime date = (isJuicy)? post.getLastModifiedDate() : post.getCreatedDate();
         return GetJunyQuestionResponse.builder()
-                .title(post.getTitle())
-                .date(date)
+                .title(post.getTitle().substring(0, Math.min(post.getTitle().length(), 20)))
+                .date(date)//TODO : 날짜 포맷 수정
                 .category(post.getCategory())
                 .answerCount(answerCount)
                 .daysUntilDday(LocalDate.now().until(targetDate, DAYS)).build();

@@ -25,8 +25,8 @@ public class GetSinyAnswerResponse {
         LocalDate targetDate = answer.getPost().getCreatedDate().toLocalDate().plusDays(3);
         LocalDateTime date = (isJuicy)? answer.getPost().getLastModifiedDate() : answer.getPost().getCreatedDate();
         return GetSinyAnswerResponse.builder()
-                    .content(answer.getContent().substring(0, 16))
-                    .date(date)
+                    .content(answer.getContent().substring(0, Math.min(20, answer.getContent().length())))
+                    .date(date)//TODO : 날짜 포맷 수정
                     .category(answer.getPost().getCategory())
                     .answerCount(answerCount)
                     .daysUntilDday(LocalDate.now().until(targetDate, DAYS)).build();

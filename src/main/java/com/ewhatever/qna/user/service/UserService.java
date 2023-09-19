@@ -11,6 +11,7 @@ import com.ewhatever.qna.user.dto.*;
 import com.ewhatever.qna.user.entity.User;
 import com.ewhatever.qna.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import static com.ewhatever.qna.common.Base.BaseResponseStatus.INVALID_USER;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -42,48 +44,52 @@ public class UserService {
     // TODO : code duplication 해결
     // TODO : getPageable 메소드 호출
     public Page<GetSinyAnswerResponse> getMyAnswers(String status, int requestPageNum) throws BaseException {
+        log.info("*** status : [{}], requestPageNum : [{}]", status, requestPageNum);
+        //TODO : 쥬니인 경우에 Exception 발생
         User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
         List<Sort.Order> sorts = new ArrayList<>();
-        Boolean isJuicy;
         if(status.equals("completed")) {//쥬시 완료
-            isJuicy = true;
-            sorts.add(Sort.Order.desc("last_modified_date"));
+            sorts.add(Sort.Order.desc("post_LastModifiedDate"));
+            Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
+            return answerRepository.findByAnswerer_UserIdxAndPost_IsJuicyTrueAndStatusEquals(user.getUserIdx(), "active", pageable).map(answer ->
+                    GetSinyAnswerResponse.fromAnswer(answer, 3L, true));
         }
         else {//쥬시 대기
-            isJuicy = false;
-            sorts.add(Sort.Order.desc("created_date"));
+            sorts.add(Sort.Order.desc("createdDate"));
+            Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
+            return answerRepository.findByAnswerer_UserIdxAndPost_IsJuicyFalseAndStatusEquals(user.getUserIdx(), "active", pageable).map(answer ->
+                    GetSinyAnswerResponse.fromAnswer(answer, answerRepository.countByPost_PostIdxAndStatusEquals(answer.getPost().getPostIdx(), "active"), false));
         }
-        Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
-        return answerRepository.findByAnswerer_UserIdxAndPost_IsJuicyAndStatusEquals(user.getUserIdx(), isJuicy,"active", pageable).map(answer ->
-            GetSinyAnswerResponse.fromAnswer(answer, answerRepository.countByPost_PostIdxAndStatusEquals(answer.getPost().getPostIdx(), "active"), isJuicy));
+
     }
 
     public Page<GetJunyQuestionResponse> getMyQuestions(String status, int requestPageNum) throws BaseException {
+        //TODO : 시니인 경우에 Exception 발생
         User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
         List<Sort.Order> sorts = new ArrayList<>();
-        Boolean isJuicy;
         if(status.equals("completed")) {//쥬시 완료
-            isJuicy = true;
-            sorts.add(Sort.Order.desc("last_modified_date"));
+            sorts.add(Sort.Order.desc("post_LastModifiedDate"));
+            Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
+            return postRepository.findByQuestioner_UserIdxAndIsJuicyTrueAndStatusEquals(user.getUserIdx(),"active", pageable).map(post ->
+                    GetJunyQuestionResponse.fromPost(post, 3L, true));
         }
         else {//쥬시 대기
-            isJuicy = false;
-            sorts.add(Sort.Order.desc("created_date"));
+            sorts.add(Sort.Order.desc("createdDate"));
+            Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
+            return postRepository.findByQuestioner_UserIdxAndIsJuicyFalseAndStatusEquals(user.getUserIdx(), "active", pageable).map(post ->
+                    GetJunyQuestionResponse.fromPost(post, answerRepository.countByPost_PostIdxAndStatusEquals(post.getPostIdx(), "active"), false));
         }
-        Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
-        return postRepository.findByQuestioner_UserIdxAndIsJuicyAndStatusEquals(user.getUserIdx(), isJuicy,"active", pageable).map(post ->
-                GetJunyQuestionResponse.fromPost(post, answerRepository.countByPost_PostIdxAndStatusEquals(post.getPostIdx(), "active"), isJuicy));
     }
 
     public Page<GetCommentResponse> getMyComments(int requestPageNum) throws BaseException {
         User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
-        Pageable pageable = getPageable(requestPageNum, 10, "created_date");
+        Pageable pageable = getPageable(requestPageNum, 10, "createdDate");
         return commentRepository.findByWriter_UserIdxAndStatusEquals(user.getUserIdx(), "active", pageable).map(GetCommentResponse::fromComment);
     }
 
     public Page<GetScrapResponse> getMyScraps(int requestPageNum) throws BaseException {
         User user = userRepository.findById(getUserIdx()).orElseThrow(()-> new BaseException(INVALID_USER));
-        Pageable pageable = getPageable(requestPageNum, 10, "created_date");
+        Pageable pageable = getPageable(requestPageNum, 10, "createdDate");
         return scrapRepository.findByUser_UserIdxAndStatusEquals(user.getUserIdx(), "active", pageable).map(GetScrapResponse::fromScrap);
 
     }
