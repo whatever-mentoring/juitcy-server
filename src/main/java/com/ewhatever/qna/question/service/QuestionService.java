@@ -8,6 +8,8 @@ import com.ewhatever.qna.question.dto.GetQuestionsRes;
 import com.ewhatever.qna.question.dto.PostQuestionReq;
 import com.ewhatever.qna.user.entity.User;
 import com.ewhatever.qna.user.repository.UserRepository;
+import com.ewhatever.qna.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,19 +19,20 @@ import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
 import static com.ewhatever.qna.common.enums.Role.SINY;
 
 @Service
+@RequiredArgsConstructor
 public class QuestionService {
-    UserRepository userRepository;
-    PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final UserService userService;
 
     /**
      * 질문 등록
-     * @param userIdx
      * @param postQuestionReq
      * @throws BaseException
      */
-    public void addQuestion(Long userIdx, PostQuestionReq postQuestionReq) throws BaseException {
+    public void addQuestion(PostQuestionReq postQuestionReq) throws BaseException {
         try {
-            User questioner = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            User questioner = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Category category = Category.valueOf(postQuestionReq.getCategory());
 
             if (questioner.getRole().equals(SINY)) {

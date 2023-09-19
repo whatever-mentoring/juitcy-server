@@ -14,6 +14,7 @@ import com.ewhatever.qna.scrap.entity.Scrap;
 import com.ewhatever.qna.scrap.repository.ScrapRepository;
 import com.ewhatever.qna.user.entity.User;
 import com.ewhatever.qna.user.repository.UserRepository;
+import com.ewhatever.qna.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final ScrapRepository scrapRepository;
     private final CommentRepository commentRepository;
+    private final UserService userService;
 
     /**
      * 쥬시글 전체 목록 조회
@@ -135,14 +137,13 @@ public class PostService {
     /**
      * 쥬시글 상세 조회
      * @param postIdx
-     * @param userIdx
      * @return GetPostRes
      * @throws BaseException
      */
-    public GetPostRes getPost(Long postIdx, Long userIdx) throws BaseException {
+    public GetPostRes getPost(Long postIdx) throws BaseException {
         try {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
-            User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            User user = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             return new GetPostRes(post.getCategory().toString(), getCardList(post), post.getLastModifiedDate(),
                     post.getCommentCount(), post.getScrapCount(), isScrap(user, post), getCommentList(post, user));
         } catch (BaseException e) {
@@ -160,11 +161,16 @@ public class PostService {
     // 댓글 list 조회
     private List<GetPostRes.CommentDto> getCommentList(Post post, User user) {
         List<GetPostRes.CommentDto> commentList = new ArrayList<>();
-        List<Comment> comments = commentRepository.findAllByPost(post);
+        List<Comment> comments = commentRepository.findAllByPostAndStatusEquals(post, ACTIVE);
 
         for (Comment comment : comments) {
-            GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(getWriter(comment.getWriter().getRole().toString()), comment.getCreatedDate(),
-                    comment.getContent(), isWriter(user, comment));
+            GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(
+                    comment.getCommentIdx(),
+                    getWriter(comment.getWriter().getRole().toString()),
+                    comment.getCreatedDate(),
+                    comment.getContent(),
+                    isWriter(user, comment)
+            );
             commentList.add(commentDto);
         }
         return commentList;
@@ -184,14 +190,13 @@ public class PostService {
     /**
      * 스크랩/취소
      * @param postIdx
-     * @param userIdx
      * @throws BaseException
      */
     @Transactional(rollbackFor = Exception.class)
-    public void scrapPost(Long postIdx, Long userIdx) throws BaseException {
+    public void scrapPost(Long postIdx) throws BaseException {
         try {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
-            User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            User user = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Boolean existsByPostAndUser = scrapRepository.existsByPostAndUser(post, user);
 
             if (existsByPostAndUser) { // 스크랩 존재

@@ -39,9 +39,9 @@ public class PostController {
      */
     @ResponseBody
     @GetMapping("/{postIdx}")
-    public BaseResponse<GetPostRes> getPost(@PathVariable Long postIdx, Long userIdx) { // TODO: 추후 getUserIdx로 수정
+    public BaseResponse<GetPostRes> getPost(@PathVariable Long postIdx) { // TODO: 추후 getUserIdx로 수정
         try {
-            return new BaseResponse<>(postService.getPost(postIdx, userIdx));
+            return new BaseResponse<>(postService.getPost(postIdx));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -52,9 +52,9 @@ public class PostController {
      */
     @ResponseBody
     @PostMapping("/{postIdx}")
-    public BaseResponse<String> scrapPost(@PathVariable Long postIdx, Long userIdx) { // TODO: 추후 getUserIdx로 수정
+    public BaseResponse<String> scrapPost(@PathVariable Long postIdx) { // TODO: 추후 getUserIdx로 수정
         try {
-            postService.scrapPost(postIdx, userIdx);
+            postService.scrapPost(postIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
