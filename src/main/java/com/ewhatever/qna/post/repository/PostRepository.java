@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByIsJuicyTrue(Pageable pageable);
@@ -24,4 +26,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Post p WHERE (p.title LIKE CONCAT('%', :searchWord, '%') OR p.content LIKE CONCAT('%', :searchWord, '%')) AND p.isJuicy = true")
     boolean existsJuicyPosts(@Param("searchWord") String searchWord);
+
+    List<Post> findAllByIsJuicyFalse();
 }

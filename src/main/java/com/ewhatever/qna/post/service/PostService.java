@@ -17,9 +17,12 @@ import com.ewhatever.qna.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -221,6 +224,29 @@ public class PostService {
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 매 시간 쥬시글 여부 확인해서 변환해주는 크론잡
+     */
+    @Scheduled(cron = "0 0 0/1 * * *")
+    @Transactional(rollbackFor = Exception.class)
+    public void checkJuicy() {
+        List<Post> postList = postRepository.findAllByIsJuicyFalse();
+        for (Post post : postList) {
+            LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
+//            System.out.println("현재 시간: " + currentDateTime);
+            LocalDateTime questionDateTime = post.getCreatedDate().truncatedTo(ChronoUnit.HOURS);
+//            System.out.println("질문 등록 시간: " + questionDateTime);
+//            int compareResult = currentDateTime.compareTo(questionDateTime);
+//            System.out.println("비교 결과: " + compareResult);
+//            Period period = Period.between(questionDate, currentDate);
+            long timeGap = ChronoUnit.HOURS.between(questionDateTime, currentDateTime);
+            if (timeGap == 72) {
+                post.setIsJuicy(true);
+                postRepository.save(post);
+            }
         }
     }
 }
