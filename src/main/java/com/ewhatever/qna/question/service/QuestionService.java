@@ -59,7 +59,7 @@ public class QuestionService {
      */
     public Page<GetQuestionsRes> getQuestions(Pageable page) throws BaseException {
         try {
-            Page<Post> postPage = postRepository.findAllByIsJuicy(page,false);
+            Page<Post> postPage = postRepository.findAllByIsJuicyFalse(page);
             return postPage.map(post -> new GetQuestionsRes(
                     post.getCategory().toString(),
                     post.getTitle(),
@@ -81,9 +81,9 @@ public class QuestionService {
     public Page<GetQuestionsRes> getQuestionsByCategory(String category, Pageable page) throws BaseException {
         try {
             Category categoryName = Category.valueOf(category.toUpperCase());
-            boolean questionExists = postRepository.existsByCategoryAndIsJuicy(categoryName, false);
+            boolean questionExists = postRepository.existsByCategoryAndIsJuicyFalse(categoryName);
             if (questionExists) {
-                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicy(categoryName, false, page);
+                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyFalse(categoryName, page);
                 return postPage.map(post -> new GetQuestionsRes(
                         post.getCategory().toString(),
                         post.getTitle(),

@@ -23,10 +23,11 @@ public class PostController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<Page<GetPostsRes>> getPosts(Pageable page, @RequestParam(required = false) String category) {
+    public BaseResponse<Page<GetPostsRes>> getPosts(Pageable page, @RequestParam(required = false) String category, @RequestParam(required = false) String searchWord) {
         try {
-            if (category.isBlank()) { // 전체 조회
-                return new BaseResponse<>(postService.getPosts(page));
+            if (category.isBlank()) { // 카테고리 X
+                if (searchWord.isBlank()) return new BaseResponse<>(postService.getPosts(page)); // 전체 목록 조회
+                else return new BaseResponse<>(postService.getPostsBySearchWord(searchWord, page));
             } else return new BaseResponse<>(postService.getPostsByCategory(category, page)); // 카테고리 조회
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
