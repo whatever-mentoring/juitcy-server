@@ -25,7 +25,7 @@ public class Answer extends BaseEntity {
     private Long answerIdx;
 
     @NotNull
-    @Size(min = 30, max = 3000)
+    @Size(min = 10, max = 1000) //TODO : 사이즈 다시 확인하기
     private String content;
 
     @NotNull

@@ -9,12 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class User extends BaseEntity {
 
     @Id
@@ -34,4 +36,7 @@ public class User extends BaseEntity {
     @NotNull
     @Enumerated(value = EnumType.ORDINAL)//TODO : EnumType 수정
     private Role role;
+
+    @NotNull
+    private String naverId;//TODO : VARCHAR 크기 수정
 }
