@@ -26,7 +26,7 @@ public class AnswerService {
         try {
             User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Post post = postRepository.findById(postAnswerReq.getPostIdx()).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
-            int currentAnswerCount = answerRepository.countByPostAndIsJuicyFalse(post);
+            Long currentAnswerCount = answerRepository.countByPost(post);
             if (user.getRole().equals(SINY)) {
                 if (currentAnswerCount < 3) { // 크론잡 주기 사이에 답변이 등록되어 isJuicy 컬럼값에 아직 반영이 안된 경우를 위해 예외처리
                     Answer answer = Answer.builder()
@@ -36,7 +36,7 @@ public class AnswerService {
                             .build();
                     answerRepository.save(answer);
 
-                    currentAnswerCount = answerRepository.countByPostAndIsJuicyFalse(post); //currentAnswerCount 최신화
+                    currentAnswerCount = answerRepository.countByPost(post); //currentAnswerCount 최신화
                     // 3번째 답변이면 쥬시글로 전환
                     if (currentAnswerCount == 3) {
                         post.setIsJuicy(true);

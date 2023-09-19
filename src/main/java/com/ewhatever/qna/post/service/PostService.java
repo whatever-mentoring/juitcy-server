@@ -142,7 +142,6 @@ public class PostService {
             User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             return new GetPostRes(post.getCategory().toString(), getCardList(post), post.getLastModifiedDate(),
                     post.getCommentCount(), post.getScrapCount(), isScrap(user, post), getCommentList(post, user));
-
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

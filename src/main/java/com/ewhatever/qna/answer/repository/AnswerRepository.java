@@ -15,5 +15,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     Long countByAnswerer_UserIdxAndStatusEquals(Long userIdx, String status);
     Page<Answer> findByAnswerer_UserIdxAndPost_IsJuicyAndStatusEquals(Long userIdx, Boolean isJuicy, String status, Pageable pageable);
     Long countByPost_PostIdxAndStatusEquals(Long postIdx, String status);
-    int countByPostAndIsJuicyFalse(Post post);
+    Long countByPost(Post post);
 }
