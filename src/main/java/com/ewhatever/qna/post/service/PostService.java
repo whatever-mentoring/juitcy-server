@@ -84,19 +84,19 @@ public class PostService {
     public Page<GetPostsRes> getPostsByCategory(String category, Pageable page) throws BaseException {
         try {
             Category categoryName = Category.valueOf(category.toUpperCase());
-            if (categoryName != null) { //TODO: 삭제 필요. IllegalArgumentException 처리 필요.
-                boolean postExists = postRepository.existsByCategory(categoryName);
-                if (postExists) {
-                    Page<Post> postPage = postRepository.findByCategory(categoryName, page); //TODO: 쥬시글 여부 추가
-                    return postPage.map(post -> new GetPostsRes(
-                            post.getCategory().name(),
-                            post.getLastModifiedDate(),
-                            post.getScrapCount(),
-                            post.getCommentCount(),
-                            getCardList(post) // 질문제목, 질문상세, 답변(0-3개)
-                    ));
-                } else throw new BaseException(NULL_POST);
-            } else throw new BaseException(INVALID_CATEGORY);
+            boolean postExists = postRepository.existsByCategory(categoryName);
+            if (postExists) {
+                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicy(categoryName, page);
+                return postPage.map(post -> new GetPostsRes(
+                        post.getCategory().name(),
+                        post.getLastModifiedDate(),
+                        post.getScrapCount(),
+                        post.getCommentCount(),
+                        getCardList(post) // 질문제목, 질문상세, 답변(0-3개)
+                ));
+            } else throw new BaseException(NULL_POST);
+        } catch (IllegalArgumentException e) {
+            throw new BaseException(INVALID_CATEGORY);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -146,8 +146,7 @@ public class PostService {
 
     // 댓글 작성자 여부
     private Boolean isWriter(User user, Comment comment) {
-        if (comment.getWriter().equals(user)) return true;
-        else return false;
+        return comment.getWriter().equals(user);
     }
 
     // 댓글 작성자
@@ -173,7 +172,7 @@ public class PostService {
             if (existsByPostAndUser) { // 스크랩 존재
                 Scrap scrap = scrapRepository.findByPostAndUser(post, user);
                 if (scrap.getStatus().equals(ACTIVE)) { // ACTIVE -> INACTIVE
-                    Long currentScrapCount = Optional.ofNullable(post.getScrapCount()).orElse(0L);
+                    long currentScrapCount = Optional.ofNullable(post.getScrapCount()).orElse(0L);
                     if (currentScrapCount > 0) {
                         post.setScrapCount(currentScrapCount - 1L);
                     } else throw new BaseException(ZERO_SCRAP_COUNT);
