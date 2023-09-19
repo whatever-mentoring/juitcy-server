@@ -46,7 +46,7 @@ public class PostService {
      */
     public Page<GetPostsRes> getPosts(Pageable page) throws BaseException {
         try {
-            Page<Post> postPage = postRepository.findAllByIsJuicy(page, true); //주씨글 여부 컬럼으로 찾기
+            Page<Post> postPage = postRepository.findAllByIsJuicyTrue(page); //주씨글 여부 컬럼으로 찾기
             return postPage.map(post -> new GetPostsRes(
                     post.getCategory().toString(),
                     post.getLastModifiedDate(),
@@ -82,11 +82,11 @@ public class PostService {
     public Page<GetPostsRes> getPostsByCategory(String category, Pageable page) throws BaseException {
         try {
             Category categoryName = Category.valueOf(category.toUpperCase());
-            boolean postExists = postRepository.existsByCategoryAndIsJuicy(categoryName, true);
+            boolean postExists = postRepository.existsByCategoryAndIsJuicyTrue(categoryName);
             if (postExists) {
-                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicy(categoryName, true, page);
+                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyTrue(categoryName, page);
                 return postPage.map(post -> new GetPostsRes(
-                        post.getCategory().name(),
+                        post.getCategory().toString(),
                         post.getLastModifiedDate(),
                         post.getScrapCount(),
                         post.getCommentCount(),
@@ -95,6 +95,33 @@ public class PostService {
             } else throw new BaseException(NULL_POST);
         } catch (IllegalArgumentException e) {
             throw new BaseException(INVALID_CATEGORY);
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 쥬시글 검색
+     * @param searchWord
+     * @param page
+     * @return Page<GetPostsRes>
+     * @throws BaseException
+     */
+    public Page<GetPostsRes> getPostsBySearchWord(String searchWord, Pageable page) throws BaseException {
+        try {
+            boolean searchResultExists = postRepository.existsJuicyPosts(searchWord);
+            if (searchResultExists) {
+                return postRepository.searchJuicyPosts(searchWord, page)
+                        .map(searchPost -> new GetPostsRes(
+                                searchPost.getCategory().toString(),
+                                searchPost.getLastModifiedDate(),
+                                searchPost.getScrapCount(),
+                                searchPost.getCommentCount(),
+                                getCardList(searchPost)
+                        ));
+            } else throw new BaseException(NULL_POST);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -151,7 +178,6 @@ public class PostService {
         if (role.equals(SENIOR)) return "익명의 시니";
         else return "익명의 쥬니";
     }
-
 
     /**
      * 스크랩/취소
