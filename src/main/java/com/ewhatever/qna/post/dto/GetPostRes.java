@@ -26,6 +26,7 @@ public class GetPostRes {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CommentDto {
+        private Long commentIdx;
         private String writer;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH:mm", timezone = "Asia/Seoul")
         private LocalDateTime date;

@@ -8,6 +8,8 @@ import com.ewhatever.qna.post.entity.Post;
 import com.ewhatever.qna.post.repository.PostRepository;
 import com.ewhatever.qna.user.entity.User;
 import com.ewhatever.qna.user.repository.UserRepository;
+import com.ewhatever.qna.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +18,17 @@ import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
 import static com.ewhatever.qna.common.enums.Role.SINY;
 
 @Service
+@RequiredArgsConstructor
 public class AnswerService {
-    UserRepository userRepository;
-    PostRepository postRepository;
-    AnswerRepository answerRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final AnswerRepository answerRepository;
+    private final UserService userService;
 
     @Transactional(rollbackFor = Exception.class)
-    public void addAnswer(Long userIdx, PostAnswerReq postAnswerReq) throws BaseException {
+    public void addAnswer(PostAnswerReq postAnswerReq) throws BaseException {
         try {
-            User user = userRepository.findByUserIdxAndStatusEquals(userIdx, ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            User user = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Post post = postRepository.findById(postAnswerReq.getPostIdx()).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
             Long currentAnswerCount = answerRepository.countByPost(post);
             if (user.getRole().equals(SINY)) {

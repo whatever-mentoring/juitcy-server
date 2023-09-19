@@ -16,7 +16,7 @@ import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
 @RequestMapping("/questions")
 @RequiredArgsConstructor
 public class QuestionController {
-    QuestionService questionService;
+    private final QuestionService questionService;
 
     /**
      * [POST] 질문 등록
@@ -25,7 +25,7 @@ public class QuestionController {
     @PostMapping("")
     public BaseResponse<String> addAnswer(@RequestBody PostQuestionReq postQuestionReq, Long userIdx) {
         try {
-            questionService.addQuestion(userIdx, postQuestionReq); //TODO: authService.getUserIdx()로 수정
+            questionService.addQuestion(postQuestionReq); //TODO: authService.getUserIdx()로 수정
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
