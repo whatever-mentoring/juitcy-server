@@ -13,6 +13,7 @@ public enum BaseResponseStatus {
      * 2000: Request 오류
      */
     // answer(2000-2099)
+    ALREADY_JUICY_POST(false, 2000, "이미 쥬시글로 등록된 post입니다,"),
 
     // comment(2100-2199)
     INVALID_COMMENT_IDX(false, 2100, "잘못된 commentIdx입니다."),
