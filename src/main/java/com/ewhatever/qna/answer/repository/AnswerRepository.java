@@ -13,6 +13,7 @@ import java.util.List;
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findAllByPost(Post post);
     Long countByAnswerer_UserIdxAndStatusEquals(Long userIdx, String status);
-    Page<Answer> findByAnswerer_UserIdxAndPost_IsJuicyAndStatusEquals(Long userIdx, Boolean isJuicy, String status, Pageable pageable);
+    Page<Answer> findByAnswerer_UserIdxAndPost_IsJuicyTrueAndStatusEquals(Long userIdx, String status, Pageable pageable);
+    Page<Answer> findByAnswerer_UserIdxAndPost_IsJuicyFalseAndStatusEquals(Long userIdx, String status, Pageable pageable);
     Long countByPost_PostIdxAndStatusEquals(Long postIdx, String status);
 }
