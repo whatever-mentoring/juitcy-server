@@ -23,8 +23,7 @@ public class PostController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<Page<GetPostsRes>> getPosts(Pageable page,
-                                                    @RequestParam(required = false) String category) {
+    public BaseResponse<Page<GetPostsRes>> getPosts(Pageable page, @RequestParam(required = false) String category) {
         try {
             if (category.isBlank()) { // 전체 조회
                 return new BaseResponse<>(postService.getPosts(page));
