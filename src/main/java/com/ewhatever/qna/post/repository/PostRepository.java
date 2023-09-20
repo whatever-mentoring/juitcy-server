@@ -20,7 +20,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByCategoryAndIsJuicyTrueOrderByLastModifiedDateDesc(Category category, Pageable pageable);
     Page<Post> findAllByCategoryAndIsJuicyFalseOrderByCreatedDateDesc(Category category, Pageable pageable);
     Long countByQuestioner_UserIdxAndStatusEquals(Long userIdx, String status);
-    Page<Post> findByQuestioner_UserIdxAndIsJuicyAndStatusEquals(Long userIdx, Boolean isJuicy, String status, Pageable pageable);
+    Page<Post> findByQuestioner_UserIdxAndIsJuicyTrueAndStatusEquals(Long userIdx, String status, Pageable pageable);
+    Page<Post> findByQuestioner_UserIdxAndIsJuicyFalseAndStatusEquals(Long userIdx, String status, Pageable pageable);
+  
     @Query("SELECT p FROM Post p WHERE (p.title LIKE CONCAT('%', :searchWord, '%') OR p.content LIKE CONCAT('%', :searchWord, '%')) AND p.isJuicy = true ORDER BY p.lastModifiedDate DESC")
     Page<Post> searchJuicyPosts(@Param("searchWord") String searchWord, Pageable pageable);
 
