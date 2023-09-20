@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-    List<Answer> findAllByPost(Post post);
+    List<Answer> findAllByPostOrderByLastModifiedDateDesc(Post post);
     Long countByAnswerer_UserIdxAndStatusEquals(Long userIdx, String status);
     Page<Answer> findByAnswerer_UserIdxAndPost_IsJuicyAndStatusEquals(Long userIdx, Boolean isJuicy, String status, Pageable pageable);
     Long countByPost_PostIdxAndStatusEquals(Long postIdx, String status);

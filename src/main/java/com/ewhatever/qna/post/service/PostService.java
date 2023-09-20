@@ -51,7 +51,7 @@ public class PostService {
      */
     public Page<GetPostsRes> getPosts(Pageable page) throws BaseException {
         try {
-            Page<Post> postPage = postRepository.findAllByIsJuicyTrue(page); //주씨글 여부 컬럼으로 찾기
+            Page<Post> postPage = postRepository.findAllByIsJuicyTrueOrderByLastModifiedDateDesc(page); // 최신순 조회
             return postPage.map(post -> new GetPostsRes(
                     post.getCategory().toString(),
                     post.getLastModifiedDate(),
@@ -70,7 +70,7 @@ public class PostService {
 
         cardList.add(post.getTitle());
         cardList.add(post.getContent());
-        List<Answer> answers = answerRepository.findAllByPost(post);
+        List<Answer> answers = answerRepository.findAllByPostOrderByLastModifiedDateDesc(post); // 답변 등록 날짜 순 조회
         for (Answer answer : answers) {
             cardList.add(answer.getContent());
         }
@@ -89,7 +89,7 @@ public class PostService {
             Category categoryName = Category.valueOf(category.toUpperCase());
             boolean postExists = postRepository.existsByCategoryAndIsJuicyTrue(categoryName);
             if (postExists) {
-                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyTrue(categoryName, page);
+                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyTrueOrderByLastModifiedDateDesc(categoryName, page); // 최신순 조회
                 return postPage.map(post -> new GetPostsRes(
                         post.getCategory().toString(),
                         post.getLastModifiedDate(),
@@ -144,8 +144,15 @@ public class PostService {
         try {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
             User user = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
-            return new GetPostRes(post.getCategory().toString(), getCardList(post), post.getLastModifiedDate(),
-                    post.getCommentCount(), post.getScrapCount(), isScrap(user, post), getCommentList(post, user));
+            return new GetPostRes(
+                    post.getCategory().toString(),
+                    getCardList(post),
+                    post.getLastModifiedDate(),
+                    post.getCommentCount(),
+                    post.getScrapCount(),
+                    isScrap(user, post),
+                    getCommentList(post, user)
+            );
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -161,7 +168,7 @@ public class PostService {
     // 댓글 list 조회
     private List<GetPostRes.CommentDto> getCommentList(Post post, User user) {
         List<GetPostRes.CommentDto> commentList = new ArrayList<>();
-        List<Comment> comments = commentRepository.findAllByPostAndStatusEquals(post, ACTIVE);
+        List<Comment> comments = commentRepository.findAllByPostAndStatusEqualsOrderByLastModifiedDateDesc(post, ACTIVE); // 최신순
 
         for (Comment comment : comments) {
             GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(
@@ -238,7 +245,7 @@ public class PostService {
     @Scheduled(cron = "0 0 0/1 * * *")
     @Transactional(rollbackFor = Exception.class)
     public void checkJuicy() {
-        List<Post> postList = postRepository.findAllByIsJuicyFalse();
+        List<Post> postList = postRepository.findAllByIsJuicyFalseOrderByCreatedDate(); // 오래된 순으로 조회
         for (Post post : postList) {
             LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
 //            System.out.println("현재 시간: " + currentDateTime);
