@@ -13,20 +13,21 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Page<Post> findAllByIsJuicyTrue(Pageable pageable);
-    Page<Post> findAllByIsJuicyFalse(Pageable pageable);
+    Page<Post> findAllByIsJuicyTrueOrderByLastModifiedDateDesc(Pageable pageable);
+    Page<Post> findAllByIsJuicyFalseOrderByCreatedDateDesc(Pageable pageable);
     Boolean existsByCategoryAndIsJuicyFalse(Category category);
     Boolean existsByCategoryAndIsJuicyTrue(Category category);
-    Page<Post> findAllByCategoryAndIsJuicyTrue(Category category, Pageable pageable);
-    Page<Post> findAllByCategoryAndIsJuicyFalse(Category category, Pageable pageable);
+    Page<Post> findAllByCategoryAndIsJuicyTrueOrderByLastModifiedDateDesc(Category category, Pageable pageable);
+    Page<Post> findAllByCategoryAndIsJuicyFalseOrderByCreatedDateDesc(Category category, Pageable pageable);
     Long countByQuestioner_UserIdxAndStatusEquals(Long userIdx, String status);
     Page<Post> findByQuestioner_UserIdxAndIsJuicyTrueAndStatusEquals(Long userIdx, String status, Pageable pageable);
     Page<Post> findByQuestioner_UserIdxAndIsJuicyFalseAndStatusEquals(Long userIdx, String status, Pageable pageable);
-    @Query("SELECT p FROM Post p WHERE (p.title LIKE CONCAT('%', :searchWord, '%') OR p.content LIKE CONCAT('%', :searchWord, '%')) AND p.isJuicy = true")
+  
+    @Query("SELECT p FROM Post p WHERE (p.title LIKE CONCAT('%', :searchWord, '%') OR p.content LIKE CONCAT('%', :searchWord, '%')) AND p.isJuicy = true ORDER BY p.lastModifiedDate DESC")
     Page<Post> searchJuicyPosts(@Param("searchWord") String searchWord, Pageable pageable);
 
     @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Post p WHERE (p.title LIKE CONCAT('%', :searchWord, '%') OR p.content LIKE CONCAT('%', :searchWord, '%')) AND p.isJuicy = true")
     boolean existsJuicyPosts(@Param("searchWord") String searchWord);
 
-    List<Post> findAllByIsJuicyFalse();
+    List<Post> findAllByIsJuicyFalseOrderByCreatedDate();
 }
