@@ -1,22 +1,24 @@
 package com.ewhatever.qna.user.entity;
 
-import com.ewhatever.qna.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.ewhatever.qna.common.Base.BaseEntity;
+import com.ewhatever.qna.common.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import java.util.Collections;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class User extends BaseEntity {
 
     @Id
@@ -34,7 +36,50 @@ public class User extends BaseEntity {
     private String provider;
 
     @NotNull
-    @Size(max = 30)
-    private String role;
+    @Enumerated(value = EnumType.ORDINAL)//TODO : EnumType 수정
+    private Role role;
 
+    @NotNull
+    private String naverId;//TODO : VARCHAR 크기 수정
+
+    /*
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority(this.role.getAuthority()));
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    @JsonIgnore
+    public String getUsername() {
+        return String.valueOf(userIdx);
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
+    }*/
 }

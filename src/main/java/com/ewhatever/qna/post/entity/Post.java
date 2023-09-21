@@ -1,6 +1,6 @@
 package com.ewhatever.qna.post.entity;
 
-import com.ewhatever.qna.common.BaseEntity;
+import com.ewhatever.qna.common.Base.BaseEntity;
 import com.ewhatever.qna.common.enums.Category;
 import com.ewhatever.qna.user.entity.User;
 import jakarta.persistence.*;
@@ -11,12 +11,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
+@Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@DynamicInsert
 public class Post extends BaseEntity {
 
     @Id
@@ -24,8 +26,12 @@ public class Post extends BaseEntity {
     private Long postIdx;
 
     @NotNull
-    @Size(min = 30, max = 1000)
-    private String question;
+    @Size(max = 300)
+    private String title;
+
+    @NotNull
+    @Size(min = 10, max = 1000)//TODO : 사이즈 다시 확인하기
+    private String content;
 
     @NotNull
     @Enumerated(value = EnumType.ORDINAL)
@@ -45,4 +51,17 @@ public class Post extends BaseEntity {
     @ColumnDefault("0")
     @Builder.Default
     private Long commentCount = 0L;
+
+    @NotNull
+    @ColumnDefault("false")
+    @Builder.Default
+    private Boolean isJuicy = false;
+
+    public void setScrapCount(Long scrapCount) {
+        this.scrapCount = scrapCount;
+    }
+    public void setCommentCount(Long commentCount) { this.commentCount = commentCount; }
+    public void setIsJuicy(Boolean isJuicy) { this.isJuicy = isJuicy; }
 }
+
+

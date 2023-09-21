@@ -1,6 +1,6 @@
 package com.ewhatever.qna.answer.entity;
 
-import com.ewhatever.qna.common.BaseEntity;
+import com.ewhatever.qna.common.Base.BaseEntity;
 import com.ewhatever.qna.post.entity.Post;
 import com.ewhatever.qna.user.entity.User;
 import jakarta.persistence.*;
@@ -10,12 +10,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class Answer extends BaseEntity {
 
     @Id
@@ -23,7 +25,7 @@ public class Answer extends BaseEntity {
     private Long answerIdx;
 
     @NotNull
-    @Size(min = 30, max = 1000)
+    @Size(min = 10, max = 1000) //TODO : 사이즈 다시 확인하기
     private String content;
 
     @NotNull
