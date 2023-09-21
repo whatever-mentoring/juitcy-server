@@ -26,11 +26,11 @@ public class Post extends BaseEntity {
     private Long postIdx;
 
     @NotNull
-    @Size(max = 300)
+    @Size(max = 50)
     private String title;
 
     @NotNull
-    @Size(min = 10, max = 1000)//TODO : 사이즈 다시 확인하기
+    @Size(min = 10, max = 1000)
     private String content;
 
     @NotNull

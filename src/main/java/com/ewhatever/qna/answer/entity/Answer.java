@@ -25,7 +25,7 @@ public class Answer extends BaseEntity {
     private Long answerIdx;
 
     @NotNull
-    @Size(min = 10, max = 1000) //TODO : 사이즈 다시 확인하기
+    @Size(min = 10, max = 1000)
     private String content;
 
     @NotNull
@@ -35,6 +35,7 @@ public class Answer extends BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_idx")
     private Post post;
 
 }
