@@ -28,6 +28,7 @@ public enum BaseResponseStatus {
     NO_SENIOR_ROLE(false, 2400, "시니가 아닙니다."),
     INVALID_USER(false, 2401, "존재하지 않는 사용자에 대한 요청입니다."),//TODO : IDX 로 수정하기
     NO_JUNIOR_ROLE(false, 2402, "쥬니가 아닙니다."),
+    NO_VALID_TOKEN(false, 2403, "유효한 토큰이 아닙니다"),
 
     // question(2500-2501)
 
@@ -47,6 +48,9 @@ public enum BaseResponseStatus {
     NULL_POST(false, 3300, "쥬시글이 없습니다."),
 
     // user(3400-3499)
+    //TODO : 4000번대에 가야하는지 생각해보기
+    NAVER_READ_BODY_FAILED(false, 3400, "네이버 회원 정보 조회 API 응답 바디를 읽는데 실패했습니다."),
+    NAVER_ACCESS_FAILED(false, 3401, "네이버 회원 프로필 접근에 실패하였습니다."),
 
     // question(3500-3599)
     NULL_QUESTION(false, 3500, "질문이 없습니다."),

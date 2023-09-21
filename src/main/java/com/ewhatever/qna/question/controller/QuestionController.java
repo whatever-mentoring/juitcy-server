@@ -5,6 +5,7 @@ import com.ewhatever.qna.common.Base.BaseResponse;
 import com.ewhatever.qna.question.dto.GetQuestionsRes;
 import com.ewhatever.qna.question.dto.PostQuestionReq;
 import com.ewhatever.qna.question.service.QuestionService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +24,10 @@ public class QuestionController {
      */
     @ResponseBody
     @PostMapping("")
-    public BaseResponse<String> addAnswer(@RequestBody PostQuestionReq postQuestionReq, Long userIdx) {
+    public BaseResponse<String> addAnswer(HttpServletRequest request,
+                                          @RequestBody PostQuestionReq postQuestionReq, Long userIdx) {
         try {
-            questionService.addQuestion(postQuestionReq); //TODO: authService.getUserIdx()로 수정
+            questionService.addQuestion(request.getHeader("Authorization"), postQuestionReq); //TODO: authService.getUserIdx()로 수정
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

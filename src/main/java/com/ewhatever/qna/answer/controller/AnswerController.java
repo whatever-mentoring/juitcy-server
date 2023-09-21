@@ -5,6 +5,7 @@ import com.ewhatever.qna.answer.repository.AnswerRepository;
 import com.ewhatever.qna.answer.service.AnswerService;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +21,10 @@ public class AnswerController {
      */
     @ResponseBody
     @PostMapping("")
-    public BaseResponse<String> addAnswer(@RequestBody PostAnswerReq postAnswerReq, Long userIdx) {
+    public BaseResponse<String> addAnswer(HttpServletRequest request,
+                                          @RequestBody PostAnswerReq postAnswerReq) {
         try {
-            answerService.addAnswer(postAnswerReq); //TODO: authService.getUserIdx()로 수정
+            answerService.addAnswer(request.getHeader("Authorization"), postAnswerReq);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

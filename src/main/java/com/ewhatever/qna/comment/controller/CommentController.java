@@ -6,6 +6,7 @@ import com.ewhatever.qna.comment.service.CommentService;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
 import com.ewhatever.qna.common.Base.BaseResponseStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.persister.entity.mutation.UpdateCoordinator;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,9 @@ public class CommentController {
 
     @ResponseBody
     @PostMapping
-    public BaseResponse<String> addComment(@RequestBody PostCommentReq postCommentReq) throws BaseException {
-        commentService.addComment(postCommentReq);
+    public BaseResponse<String> addComment(HttpServletRequest request,
+                                           @RequestBody PostCommentReq postCommentReq) throws BaseException {
+        commentService.addComment(request.getHeader("Authorization"), postCommentReq);
         return new BaseResponse<>(SUCCESS);
     }
 

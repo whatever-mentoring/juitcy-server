@@ -2,6 +2,7 @@ package com.ewhatever.qna.question.service;
 
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.enums.Category;
+import com.ewhatever.qna.login.dto.AuthService;
 import com.ewhatever.qna.post.entity.Post;
 import com.ewhatever.qna.post.repository.PostRepository;
 import com.ewhatever.qna.question.dto.GetQuestionsRes;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
 import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
+import static com.ewhatever.qna.common.enums.Role.JUNY;
 import static com.ewhatever.qna.common.enums.Role.SINY;
 
 @Service
@@ -25,17 +27,19 @@ public class QuestionService {
     private final PostRepository postRepository;
     private final UserService userService;
 
+    private final AuthService authService;
+
     /**
      * 질문 등록
      * @param postQuestionReq
      * @throws BaseException
      */
-    public void addQuestion(PostQuestionReq postQuestionReq) throws BaseException {
+    public void addQuestion(String token, PostQuestionReq postQuestionReq) throws BaseException {
         try {
-            User questioner = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            User questioner = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Category category = Category.valueOf(postQuestionReq.getCategory());
 
-            if (questioner.getRole().equals(SINY)) {
+            if (questioner.getRole().equals(JUNY)) {
                 Post question = Post.builder()
                         .title(postQuestionReq.getTitle())
                         .content(postQuestionReq.getContent())

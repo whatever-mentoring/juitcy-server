@@ -4,6 +4,7 @@ import com.ewhatever.qna.answer.dto.PostAnswerReq;
 import com.ewhatever.qna.answer.entity.Answer;
 import com.ewhatever.qna.answer.repository.AnswerRepository;
 import com.ewhatever.qna.common.Base.BaseException;
+import com.ewhatever.qna.login.dto.AuthService;
 import com.ewhatever.qna.post.entity.Post;
 import com.ewhatever.qna.post.repository.PostRepository;
 import com.ewhatever.qna.user.entity.User;
@@ -25,10 +26,12 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
     private final UserService userService;
 
+    private final AuthService authService;
+
     @Transactional(rollbackFor = Exception.class)
-    public void addAnswer(PostAnswerReq postAnswerReq) throws BaseException {
+    public void addAnswer(String token, PostAnswerReq postAnswerReq) throws BaseException {
         try {
-            User user = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            User user = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Post post = postRepository.findById(postAnswerReq.getPostIdx()).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
             Long currentAnswerCount = answerRepository.countByPost(post);
             if (user.getRole().equals(SINY)) {

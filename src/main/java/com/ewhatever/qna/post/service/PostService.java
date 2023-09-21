@@ -6,6 +6,7 @@ import com.ewhatever.qna.comment.entity.Comment;
 import com.ewhatever.qna.comment.repository.CommentRepository;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.enums.Category;
+import com.ewhatever.qna.login.dto.AuthService;
 import com.ewhatever.qna.post.dto.GetPostRes;
 import com.ewhatever.qna.post.dto.GetPostsRes;
 import com.ewhatever.qna.post.entity.Post;
@@ -43,6 +44,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final UserService userService;
 
+    private final AuthService authService;
     /**
      * 쥬시글 전체 목록 조회
      * @param page
@@ -140,10 +142,10 @@ public class PostService {
      * @return GetPostRes
      * @throws BaseException
      */
-    public GetPostRes getPost(Long postIdx) throws BaseException {
+    public GetPostRes getPost(String token, Long postIdx) throws BaseException {
         try {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
-            User user = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            User user = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             return new GetPostRes(
                     post.getCategory().toString(),
                     getCardList(post),
@@ -200,10 +202,10 @@ public class PostService {
      * @throws BaseException
      */
     @Transactional(rollbackFor = Exception.class)
-    public void scrapPost(Long postIdx) throws BaseException {
+    public void scrapPost(String token, Long postIdx) throws BaseException {
         try {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
-            User user = userRepository.findByUserIdxAndStatusEquals(userService.getUserIdx(), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
+            User user = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Boolean existsByPostAndUser = scrapRepository.existsByPostAndUser(post, user);
 
             if (existsByPostAndUser) { // 스크랩 존재

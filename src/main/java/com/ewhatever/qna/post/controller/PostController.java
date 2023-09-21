@@ -5,6 +5,7 @@ import com.ewhatever.qna.common.Base.BaseResponse;
 import com.ewhatever.qna.post.dto.GetPostRes;
 import com.ewhatever.qna.post.dto.GetPostsRes;
 import com.ewhatever.qna.post.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,9 +40,10 @@ public class PostController {
      */
     @ResponseBody
     @GetMapping("/{postIdx}")
-    public BaseResponse<GetPostRes> getPost(@PathVariable Long postIdx) { // TODO: 추후 getUserIdx로 수정
+    public BaseResponse<GetPostRes> getPost(HttpServletRequest request,
+                                            @PathVariable Long postIdx) { // TODO: 추후 getUserIdx로 수정
         try {
-            return new BaseResponse<>(postService.getPost(postIdx));
+            return new BaseResponse<>(postService.getPost(request.getHeader("Authorization"), postIdx));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -52,9 +54,10 @@ public class PostController {
      */
     @ResponseBody
     @PostMapping("/{postIdx}")
-    public BaseResponse<String> scrapPost(@PathVariable Long postIdx) { // TODO: 추후 getUserIdx로 수정
+    public BaseResponse<String> scrapPost(HttpServletRequest request,
+                                          @PathVariable Long postIdx) { // TODO: 추후 getUserIdx로 수정
         try {
-            postService.scrapPost(postIdx);
+            postService.scrapPost(request.getHeader("Authorization"), postIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
