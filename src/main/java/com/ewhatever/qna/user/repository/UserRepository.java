@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserIdxAndStatusEquals(Long userIdx, String status);
+    Optional<User> findByNaverIdAndStatusEquals(String naverId, String status);
 }
