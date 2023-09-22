@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -16,8 +17,8 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Setter
 public class GetJunyQuestionResponse {
     private String title;
-    private LocalDateTime date;
-    private Category category;
+    private String date;
+    private String category;
     private Long answerCount;
     private Long daysUntilDday;
 
@@ -26,8 +27,8 @@ public class GetJunyQuestionResponse {
         LocalDateTime date = (isJuicy)? post.getLastModifiedDate() : post.getCreatedDate();
         return GetJunyQuestionResponse.builder()
                 .title(post.getTitle().substring(0, Math.min(post.getTitle().length(), 20)))
-                .date(date)//TODO : 날짜 포맷 수정
-                .category(post.getCategory())
+                .date(date.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
+                .category(post.getCategory().getKrName())
                 .answerCount(answerCount)
                 .daysUntilDday(LocalDate.now().until(targetDate, DAYS)).build();
     }

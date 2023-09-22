@@ -93,7 +93,7 @@ public class PostService {
             if (postExists) {
                 Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyTrueOrderByLastModifiedDateDesc(categoryName, page); // 최신순 조회
                 return postPage.map(post -> new GetPostsRes(
-                        post.getCategory().toString(),
+                        post.getCategory().getKrName(),
                         post.getLastModifiedDate(),
                         post.getScrapCount(),
                         post.getCommentCount(),
@@ -122,7 +122,7 @@ public class PostService {
             if (searchResultExists) {
                 return postRepository.searchJuicyPosts(searchWord, page)
                         .map(searchPost -> new GetPostsRes(
-                                searchPost.getCategory().toString(),
+                                searchPost.getCategory().getKrName(),
                                 searchPost.getLastModifiedDate(),
                                 searchPost.getScrapCount(),
                                 searchPost.getCommentCount(),
@@ -147,7 +147,7 @@ public class PostService {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
             User user = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             return new GetPostRes(
-                    post.getCategory().toString(),
+                    post.getCategory().getKrName(),
                     getCardList(post),
                     post.getLastModifiedDate(),
                     post.getCommentCount(),
