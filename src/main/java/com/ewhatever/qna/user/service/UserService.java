@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ewhatever.qna.common.Base.BaseResponseStatus.INVALID_USER;
+import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +48,8 @@ public class UserService {
     // TODO : getPageable 메소드 호출
     public Page<GetSinyAnswerResponse> getMyAnswers(String token, String status, int requestPageNum) throws BaseException {
         log.info("*** status : [{}], requestPageNum : [{}]", status, requestPageNum);
-        //TODO : 쥬니인 경우에 Exception 발생
         User user = userRepository.findById(authService.getUserIdx(token)).orElseThrow(()-> new BaseException(INVALID_USER));
+        checkSinyRole(user.getRole());
         List<Sort.Order> sorts = new ArrayList<>();
         if(status.equals("completed")) {//쥬시 완료
             sorts.add(Sort.Order.desc("post_LastModifiedDate"));
@@ -67,8 +67,8 @@ public class UserService {
     }
 
     public Page<GetJunyQuestionResponse> getMyQuestions(String token, String status, int requestPageNum) throws BaseException {
-        //TODO : 시니인 경우에 Exception 발생
         User user = userRepository.findById(authService.getUserIdx(token)).orElseThrow(()-> new BaseException(INVALID_USER));
+        checkJunyRole(user.getRole());
         List<Sort.Order> sorts = new ArrayList<>();
         if(status.equals("completed")) {//쥬시 완료
             sorts.add(Sort.Order.desc("lastModifiedDate"));
@@ -117,5 +117,15 @@ public class UserService {
                 .commentCount(commentRepository.countByWriter_UserIdxAndStatusEquals(user.getUserIdx(), "active"))
                 .scrapCount(scrapRepository.countByUser_UserIdxAndStatusEquals(user.getUserIdx(), "active"))
                 .build());
+    }
+
+    private void checkJunyRole(Role role) throws BaseException {
+        if(role.equals(Role.JUNY)) return;
+        else throw new BaseException(NO_JUNIOR_ROLE);
+    }
+
+    private void checkSinyRole(Role role) throws BaseException {
+        if(role.equals(Role.SINY)) return;
+        else throw new BaseException(NO_SENIOR_ROLE);
     }
 }
