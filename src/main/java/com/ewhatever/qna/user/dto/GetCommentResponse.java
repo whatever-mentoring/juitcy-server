@@ -22,9 +22,18 @@ public class GetCommentResponse {
     //TODO : dto에서 LocalDateTime -> LocalDate로 변경
     public static GetCommentResponse fromComment(Comment comment) {
         Post post = comment.getPost();
-        return GetCommentResponse.builder().content(comment.getContent().substring(0, Math.min(comment.getContent().length(), 20)))
+
+        String title;
+        if(post.getTitle().length() > 10) title = post.getTitle().substring(0, 10) + "...";
+        else title = post.getTitle();
+
+        String content;
+        if(comment.getContent().length() > 20) content = comment.getContent().substring(0, 20) + "...";
+        else content = comment.getContent();
+
+        return GetCommentResponse.builder().content(content)
                 .date(comment.getCreatedDate().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
                 .postIdx(post.getPostIdx())
-                .postTitle(post.getTitle().substring(0, Math.min(post.getTitle().length(), 10))).build();
+                .postTitle(title).build();
     }
 }

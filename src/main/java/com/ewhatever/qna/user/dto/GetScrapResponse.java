@@ -26,10 +26,18 @@ public class GetScrapResponse {
     //TODO : substring말고 잘라진 부분만 가져오게 수정?
     public static GetScrapResponse fromScrap(Scrap scrap) {
         Post post = scrap.getPost();
-        return GetScrapResponse.builder().postTitle(post.getTitle().substring(0, Math.min(post.getTitle().length(), 10)))
+        String title;
+        if(post.getTitle().length() > 10) title = post.getTitle().substring(0, 10) + "...";
+        else title = post.getTitle();
+
+        String content;
+        if(post.getContent().length() > 45) content = post.getContent().substring(0, 45) + "...";
+        else content = post.getContent();
+
+        return GetScrapResponse.builder().postTitle(title)
                 .postIdx(post.getPostIdx())
                 .category(post.getCategory().getKrName())
-                .content(post.getContent().substring(0, Math.min(post.getContent().length(), 45)))
+                .content(content)
                 .commentCount(post.getCommentCount())
                 .scrapCount(post.getScrapCount())
                 .date(post.getLastModifiedDate().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
