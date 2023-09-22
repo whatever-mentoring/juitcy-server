@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### properties ###
-**/application.properties
+application.properties
 
 ### 서버 인증파일 ###
 /pem
