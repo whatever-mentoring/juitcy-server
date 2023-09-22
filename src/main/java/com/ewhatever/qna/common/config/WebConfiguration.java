@@ -10,7 +10,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000") //TODO : 프론트 베포 URL 추가
+                .allowedOrigins("http://localhost:3000", "https://ewhatever-front.vercel.app")
                 .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE");
     }
 }
