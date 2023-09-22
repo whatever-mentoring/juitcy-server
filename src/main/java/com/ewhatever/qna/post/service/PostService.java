@@ -54,7 +54,7 @@ public class PostService {
             Page<Post> postPage = postRepository.findAllByIsJuicyTrueOrderByLastModifiedDateDesc(page); // 최신순 조회
             return postPage.map(post -> new GetPostsRes(
                     post.getPostIdx(),
-                    post.getCategory().toString(),
+                    post.getCategory().getKrName(),
                     post.getLastModifiedDate(),
                     post.getScrapCount(),
                     post.getCommentCount(),
