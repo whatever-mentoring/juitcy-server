@@ -23,6 +23,8 @@ public class GetSinyAnswerResponse {
     private String category;
     private Long answerCount;
     private Long daysUntilDday;
+    private Long postIdx;
+
 
     public static GetSinyAnswerResponse fromAnswer(Answer answer, Long answerCount, Boolean isJuicy) {
         LocalDate targetDate = answer.getPost().getCreatedDate().toLocalDate().plusDays(3);
@@ -31,6 +33,7 @@ public class GetSinyAnswerResponse {
                     .content(answer.getContent().substring(0, Math.min(20, answer.getContent().length())))
                     .date(date.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
                     .category(answer.getPost().getCategory().getKrName())
+                    .postIdx(answer.getPost().getPostIdx())
                     .answerCount(answerCount)
                     .daysUntilDday(LocalDate.now().until(targetDate, DAYS)).build();
     }
