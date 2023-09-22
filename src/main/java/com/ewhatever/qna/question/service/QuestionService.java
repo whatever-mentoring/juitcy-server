@@ -9,7 +9,6 @@ import com.ewhatever.qna.question.dto.GetQuestionsRes;
 import com.ewhatever.qna.question.dto.PostQuestionReq;
 import com.ewhatever.qna.user.entity.User;
 import com.ewhatever.qna.user.repository.UserRepository;
-import com.ewhatever.qna.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,15 +17,12 @@ import org.springframework.stereotype.Service;
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
 import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
 import static com.ewhatever.qna.common.enums.Role.JUNY;
-import static com.ewhatever.qna.common.enums.Role.SINY;
 
 @Service
 @RequiredArgsConstructor
 public class QuestionService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final UserService userService;
-
     private final AuthService authService;
 
     /**
@@ -68,6 +64,7 @@ public class QuestionService {
         try {
             Page<Post> postPage = postRepository.findAllByIsJuicyFalseOrderByCreatedDateDesc(page); // 최신순 조회
             return postPage.map(post -> new GetQuestionsRes(
+                    post.getPostIdx(),
                     post.getCategory().getKrName(),
                     post.getTitle(),
                     post.getContent(),
@@ -92,6 +89,7 @@ public class QuestionService {
             if (questionExists) {
                 Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyFalseOrderByCreatedDateDesc(categoryName, page); // 최신순 조회
                 return postPage.map(post -> new GetQuestionsRes(
+                        post.getPostIdx(),
                         post.getCategory().getKrName(),
                         post.getTitle(),
                         post.getContent(),
