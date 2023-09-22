@@ -29,8 +29,13 @@ public class GetSinyAnswerResponse {
     public static GetSinyAnswerResponse fromAnswer(Answer answer, Long answerCount, Boolean isJuicy) {
         LocalDate targetDate = answer.getPost().getCreatedDate().toLocalDate().plusDays(3);
         LocalDateTime date = (isJuicy)? answer.getPost().getLastModifiedDate() : answer.getPost().getCreatedDate();
+
+        String content;
+        if(answer.getContent().length() > 20) content = answer.getContent().substring(0, 20) + "...";
+        else content = answer.getContent();
+
         return GetSinyAnswerResponse.builder()
-                    .content(answer.getContent().substring(0, Math.min(20, answer.getContent().length())))
+                    .content(content)
                     .date(date.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
                     .category(answer.getPost().getCategory().getKrName())
                     .postIdx(answer.getPost().getPostIdx())
