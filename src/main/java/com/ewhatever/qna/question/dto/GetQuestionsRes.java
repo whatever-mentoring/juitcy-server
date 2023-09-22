@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 @Data
 @AllArgsConstructor
 public class GetQuestionsRes {
+    private Long postIdx;
     private String category;
     private String title;
     private String content;

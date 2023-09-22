@@ -24,10 +24,9 @@ public class QuestionController {
      */
     @ResponseBody
     @PostMapping("")
-    public BaseResponse<String> addAnswer(HttpServletRequest request,
-                                          @RequestBody PostQuestionReq postQuestionReq, Long userIdx) {
+    public BaseResponse<String> addAnswer(HttpServletRequest request, @RequestBody PostQuestionReq postQuestionReq) {
         try {
-            questionService.addQuestion(request.getHeader("Authorization"), postQuestionReq); //TODO: authService.getUserIdx()로 수정
+            questionService.addQuestion(request.getHeader("Authorization"), postQuestionReq);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
