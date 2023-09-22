@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping(value = "/posts", produces = "application/json; charset=UTF8")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
