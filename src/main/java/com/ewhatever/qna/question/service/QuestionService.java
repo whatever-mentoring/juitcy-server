@@ -68,7 +68,7 @@ public class QuestionService {
         try {
             Page<Post> postPage = postRepository.findAllByIsJuicyFalseOrderByCreatedDateDesc(page); // 최신순 조회
             return postPage.map(post -> new GetQuestionsRes(
-                    post.getCategory().toString(),
+                    post.getCategory().getKrName(),
                     post.getTitle(),
                     post.getContent(),
                     post.getCreatedDate()
@@ -92,7 +92,7 @@ public class QuestionService {
             if (questionExists) {
                 Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyFalseOrderByCreatedDateDesc(categoryName, page); // 최신순 조회
                 return postPage.map(post -> new GetQuestionsRes(
-                        post.getCategory().toString(),
+                        post.getCategory().getKrName(),
                         post.getTitle(),
                         post.getContent(),
                         post.getCreatedDate()

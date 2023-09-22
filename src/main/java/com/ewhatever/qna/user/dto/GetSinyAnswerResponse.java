@@ -2,12 +2,15 @@ package com.ewhatever.qna.user.dto;
 
 import com.ewhatever.qna.answer.entity.Answer;
 import com.ewhatever.qna.common.enums.Category;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -16,8 +19,8 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Getter
 public class GetSinyAnswerResponse {
     private String content;
-    private LocalDateTime date;
-    private Category category;
+    private String date;
+    private String category;
     private Long answerCount;
     private Long daysUntilDday;
 
@@ -26,8 +29,8 @@ public class GetSinyAnswerResponse {
         LocalDateTime date = (isJuicy)? answer.getPost().getLastModifiedDate() : answer.getPost().getCreatedDate();
         return GetSinyAnswerResponse.builder()
                     .content(answer.getContent().substring(0, Math.min(20, answer.getContent().length())))
-                    .date(date)//TODO : 날짜 포맷 수정
-                    .category(answer.getPost().getCategory())
+                    .date(date.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
+                    .category(answer.getPost().getCategory().getKrName())
                     .answerCount(answerCount)
                     .daysUntilDday(LocalDate.now().until(targetDate, DAYS)).build();
     }
