@@ -40,8 +40,7 @@ public class PostController {
      */
     @ResponseBody
     @GetMapping("/{postIdx}")
-    public BaseResponse<GetPostRes> getPost(HttpServletRequest request,
-                                            @PathVariable Long postIdx) { // TODO: 추후 getUserIdx로 수정
+    public BaseResponse<GetPostRes> getPost(HttpServletRequest request, @PathVariable Long postIdx) {
         try {
             return new BaseResponse<>(postService.getPost(request.getHeader("Authorization"), postIdx));
         } catch (BaseException e) {
@@ -54,8 +53,7 @@ public class PostController {
      */
     @ResponseBody
     @PostMapping("/{postIdx}")
-    public BaseResponse<String> scrapPost(HttpServletRequest request,
-                                          @PathVariable Long postIdx) { // TODO: 추후 getUserIdx로 수정
+    public BaseResponse<String> scrapPost(HttpServletRequest request, @PathVariable Long postIdx) {
         try {
             postService.scrapPost(request.getHeader("Authorization"), postIdx);
             return new BaseResponse<>(SUCCESS);

@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetPostsRes {
+    private Long postIdx;
     private String category;
     @JsonIgnore
     private LocalDateTime date;

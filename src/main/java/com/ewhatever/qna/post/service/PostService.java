@@ -15,7 +15,6 @@ import com.ewhatever.qna.scrap.entity.Scrap;
 import com.ewhatever.qna.scrap.repository.ScrapRepository;
 import com.ewhatever.qna.user.entity.User;
 import com.ewhatever.qna.user.repository.UserRepository;
-import com.ewhatever.qna.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +41,6 @@ public class PostService {
     private final UserRepository userRepository;
     private final ScrapRepository scrapRepository;
     private final CommentRepository commentRepository;
-    private final UserService userService;
 
     private final AuthService authService;
     /**
@@ -55,6 +53,7 @@ public class PostService {
         try {
             Page<Post> postPage = postRepository.findAllByIsJuicyTrueOrderByLastModifiedDateDesc(page); // 최신순 조회
             return postPage.map(post -> new GetPostsRes(
+                    post.getPostIdx(),
                     post.getCategory().toString(),
                     post.getLastModifiedDate(),
                     post.getScrapCount(),
@@ -93,6 +92,7 @@ public class PostService {
             if (postExists) {
                 Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyTrueOrderByLastModifiedDateDesc(categoryName, page); // 최신순 조회
                 return postPage.map(post -> new GetPostsRes(
+                        post.getPostIdx(),
                         post.getCategory().getKrName(),
                         post.getLastModifiedDate(),
                         post.getScrapCount(),
@@ -122,6 +122,7 @@ public class PostService {
             if (searchResultExists) {
                 return postRepository.searchJuicyPosts(searchWord, page)
                         .map(searchPost -> new GetPostsRes(
+                                searchPost.getPostIdx(),
                                 searchPost.getCategory().getKrName(),
                                 searchPost.getLastModifiedDate(),
                                 searchPost.getScrapCount(),
