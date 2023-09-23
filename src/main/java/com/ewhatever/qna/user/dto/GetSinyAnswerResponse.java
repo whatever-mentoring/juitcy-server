@@ -31,7 +31,7 @@ public class GetSinyAnswerResponse {
         LocalDateTime date = (isJuicy)? answer.getPost().getLastModifiedDate() : answer.getPost().getCreatedDate();
 
         String content;
-        if(answer.getContent().length() > 20) content = answer.getContent().substring(0, 20) + "...";
+        if(answer.getContent().length() > 22) content = answer.getContent().substring(0, 22) + "...";
         else content = answer.getContent();
 
         return GetSinyAnswerResponse.builder()
