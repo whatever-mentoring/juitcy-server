@@ -27,11 +27,14 @@ public class GetScrapResponse {
     public static GetScrapResponse fromScrap(Scrap scrap) {
         Post post = scrap.getPost();
         String title;
-        if(post.getTitle().length() > 10) title = post.getTitle().substring(0, 10) + "...";
+        if(post.getTitle().length() > 21) title = post.getTitle().substring(0, 21) + "...";
         else title = post.getTitle();
 
         String content;
-        if(post.getContent().length() > 45) content = post.getContent().substring(0, 45) + "...";
+        if(post.getContent().length() > 58)
+            content = post.getContent().substring(0, 30) + "\n" + post.getContent().substring(30, 58) + "...";
+        else if(post.getContent().length() > 30)
+            content = post.getContent().substring(0, 30) + "\n" + post.getContent().substring(30);
         else content = post.getContent();
 
         return GetScrapResponse.builder().postTitle(title)
