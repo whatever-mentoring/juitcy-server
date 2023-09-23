@@ -94,14 +94,15 @@ public class LoginService {
     @Transactional
     public void logout(String token) throws Exception {
         User user = userRepository.findById(authService.getUserIdx(token)).orElseThrow(()-> new BaseException(INVALID_USER));
-        DeleteNaverTokenRes deleteNaverTokenRes = deleteNaverToken(user.getProviderToken());
+        user.setRefreshToken(null);
+        /*DeleteNaverTokenRes deleteNaverTokenRes = deleteNaverToken(user.getProviderToken());
         if(!deleteNaverTokenRes.getResult().equals("success")) throw new Exception("토큰 삭제 실패");//TODO : Exception 수정
         else {
             user.setProviderToken(null);
             user.setRefreshToken(null);
-        }
+        }*/
     }
-
+    /*
     public DeleteNaverTokenRes deleteNaverToken(String accessToken) throws UnsupportedEncodingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -128,7 +129,7 @@ public class LoginService {
             e.printStackTrace();//TODO : Exception 처리
         }
         return null;
-    }
+    }*/
 
     @Transactional
     public LoginRes createUser(GetNaverProfileRes getNaverProfileRes, String providerAccessToken) throws BaseException {
@@ -143,7 +144,6 @@ public class LoginService {
         }
         else user = userRepository.save(getNaverProfileRes.getResponse().toEntity());
 
-        user.setProviderToken(providerAccessToken);
         JwtTokenDto jwtTokenDto = jwtIssuer.createToken(user.getUserIdx(), user.getRole().name());
         user.setRefreshToken(jwtTokenDto.getRefreshToken());
         userRepository.save(user);
