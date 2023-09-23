@@ -32,8 +32,9 @@ public class User extends BaseEntity {
     @Size(max = 30)
     private String name;
 
-    @NotNull
-    private String provider;
+    private String providerToken;//네이버 accessToken
+
+    private String refreshToken;//jwt refreshToken
 
     @NotNull
     @Enumerated(value = EnumType.ORDINAL)//TODO : EnumType 수정
@@ -41,6 +42,14 @@ public class User extends BaseEntity {
 
     @NotNull
     private String naverId;//TODO : VARCHAR 크기 수정
+
+    public void setProviderToken(String providerToken) {
+        this.providerToken = providerToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
     /*
     @JsonIgnore

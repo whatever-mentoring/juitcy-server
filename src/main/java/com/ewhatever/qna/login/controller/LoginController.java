@@ -12,23 +12,39 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+
+import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
 public class LoginController {
     private final LoginService loginService;
 
-    @GetMapping(value="/login/naver")
+/*    @GetMapping(value="/login/naver")
     @ResponseBody
     public BaseResponse<LoginRes> callBack(@RequestParam("code") String code,
                                            @RequestParam("state") String state) throws BaseException, JsonProcessingException {
         return new BaseResponse<>(loginService.callback(code, state));
+    }*/
+
+    @GetMapping(value="/login/naver", produces = "application/json; charset=UTF8")
+    @ResponseBody
+    public BaseResponse<LoginRes> callBack(HttpServletRequest request) throws BaseException, JsonProcessingException {
+        return new BaseResponse<>(loginService.callback(request.getParameter("code"), request.getParameter("state")));
+    }
+    @GetMapping("/login")
+    public String login() {
+        return "naver_login";
     }
 
-    @GetMapping("/test")
+    @PostMapping("/logout")
     @ResponseBody
-    public BaseResponse<String> tmp() {
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+    public BaseResponse<String> logout(HttpServletRequest request) throws Exception {
+        loginService.logout(request.getHeader("Authorization"));
+        return new BaseResponse<>(SUCCESS);
     }
+
 
 }

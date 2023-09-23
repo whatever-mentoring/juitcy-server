@@ -26,6 +26,10 @@ public class UserInfoDto {
 
     public User toEntity() {
         Role role = (Integer.valueOf(this.birthyear) > LocalDate.now().getYear() - 49)? Role.JUNY : Role.SINY;
-        return User.builder().name(this.name).provider("naver").role(role).naverId(this.id).build();
+        return User.builder()
+                .name(this.name)
+                .role(role)
+                .naverId(this.id)
+                .build();
     }
 }
