@@ -20,6 +20,12 @@ import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
 public class LoginController {
     private final LoginService loginService;
 
+    @GetMapping("/healthcheck")
+    @ResponseBody
+    public BaseResponse<String> healthcheck() {
+        return new BaseResponse<>(SUCCESS);
+    }
+
     @GetMapping(value="/login/naver")
     @ResponseBody
     public BaseResponse<LoginRes> callBack(@RequestParam("code") String code,
