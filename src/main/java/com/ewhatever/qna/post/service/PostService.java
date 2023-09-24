@@ -79,7 +79,7 @@ public class PostService {
 
         cardList.add(post.getTitle());
         cardList.add(post.getContent());
-        List<Answer> answers = answerRepository.findAllByPostOrderByLastModifiedDateDesc(post); // 답변 등록 날짜 순 조회
+        List<Answer> answers = answerRepository.findAllByPostOrderByCreatedDateDesc(post); // 답변 등록 날짜 순 조회
         for (Answer answer : answers) {
             cardList.add(answer.getContent());
         }
@@ -180,7 +180,7 @@ public class PostService {
     // 댓글 list 조회
     private List<GetPostRes.CommentDto> getCommentList(Post post, User user) {
         List<GetPostRes.CommentDto> commentList = new ArrayList<>();
-        List<Comment> comments = commentRepository.findAllByPostAndStatusEqualsOrderByLastModifiedDateDesc(post, ACTIVE); // 최신순
+        List<Comment> comments = commentRepository.findAllByPostAndStatusEqualsOrderByCreatedDateDesc(post, ACTIVE); // 최신순
 
         for (Comment comment : comments) {
             GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(
