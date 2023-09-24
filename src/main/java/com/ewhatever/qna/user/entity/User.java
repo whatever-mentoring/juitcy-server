@@ -6,11 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import java.util.Collections;
 
 @Entity
@@ -19,6 +18,8 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@DynamicUpdate
+@ToString
 public class User extends BaseEntity {
 
     @Id
@@ -31,9 +32,7 @@ public class User extends BaseEntity {
     @NotNull
     @Size(max = 30)
     private String name;
-
-    @NotNull
-    private String provider;
+    private String refreshToken;//jwt refreshToken
 
     @NotNull
     @Enumerated(value = EnumType.ORDINAL)//TODO : EnumType 수정
@@ -41,6 +40,10 @@ public class User extends BaseEntity {
 
     @NotNull
     private String naverId;//TODO : VARCHAR 크기 수정
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
     /*
     @JsonIgnore

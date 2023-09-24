@@ -19,12 +19,20 @@ public class GetCommentResponse {
     private String postTitle;
 
     //TODO : DTO 변환 메소드 위치 변경
-    //TODO : dto에서 LocalDateTime -> LocalDate로 변경
     public static GetCommentResponse fromComment(Comment comment) {
         Post post = comment.getPost();
-        return GetCommentResponse.builder().content(comment.getContent().substring(0, Math.min(comment.getContent().length(), 20)))
+
+        String title;
+        if(post.getTitle().length() > 23) title = post.getTitle().substring(0, 23) + "...";
+        else title = post.getTitle();
+
+        String content;
+        if(comment.getContent().length() > 25) content = comment.getContent().substring(0, 25) + "...";
+        else content = comment.getContent();
+
+        return GetCommentResponse.builder().content(content)
                 .date(comment.getCreatedDate().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
                 .postIdx(post.getPostIdx())
-                .postTitle(post.getTitle().substring(0, Math.min(post.getTitle().length(), 10))).build();
+                .postTitle(title).build();
     }
 }

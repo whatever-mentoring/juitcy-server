@@ -1,13 +1,13 @@
 package com.ewhatever.qna.login.service;
 
 import com.ewhatever.qna.common.Base.BaseException;
+import com.ewhatever.qna.login.CustomUnauthorizedException;
 import com.ewhatever.qna.login.JwtIssuer;
 import com.ewhatever.qna.login.dto.*;
 import com.ewhatever.qna.user.entity.User;
 import com.ewhatever.qna.user.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -39,14 +39,13 @@ public class LoginService {
     private static final RestTemplate restTemplate = new RestTemplate();
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-
     private final String clientId = "mp0CQ1x6hXjAn1PDkrgT";
     private final String clientSecret = "yZJwVrevKp";
 
     private final String userInfoUrl = "https://openapi.naver.com/v1/nid/me";
     private final String tokenUrl =  "https://nid.naver.com/oauth2.0/token";
 
-    public String getAccessToken(String authorizationCode, String state) {
+    public String getAccessToken(String authorizationCode, String state) throws BaseException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -62,11 +61,14 @@ public class LoginService {
                 .postForEntity(tokenUrl, request, String.class);
 
         try {
-            return objectMapper.readValue(response.getBody(), NaverTokenDto.class).getAccessToken();
+            NaverTokenDto naverTokenDto = objectMapper.readValue(response.getBody(), NaverTokenDto.class);
+            if(naverTokenDto.getError() != null) throw new Exception(naverTokenDto.getErrorDescription());
+            return naverTokenDto.getAccessToken();
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("네이버 접근 토큰 발급 오류 원인 : [{}]", e.getMessage());
+            throw new BaseException(NAVER_ACCESS_TOKEN_FAILED);
         }
-        return null;
     }
 
     //public LoginRes callback(HttpServletRequest request) throws BaseException, JsonProcessingException
@@ -91,26 +93,79 @@ public class LoginService {
     }
 
     @Transactional
+    public void logout(String token) throws Exception {
+        if(!jwtIssuer.validateToken(token)) throw new CustomUnauthorizedException(INVALID_TOKEN.getMessage());
+        User user = userRepository.findById(authService.getUserIdx(token)).orElseThrow(()-> new BaseException(INVALID_USER));
+        user.setRefreshToken(null);
+        /*DeleteNaverTokenRes deleteNaverTokenRes = deleteNaverToken(user.getProviderToken());
+        if(!deleteNaverTokenRes.getResult().equals("success")) throw new Exception("토큰 삭제 실패");//TODO : Exception 수정
+        else {
+            user.setProviderToken(null);
+            user.setRefreshToken(null);
+        }*/
+    }
+    /*
+    public DeleteNaverTokenRes deleteNaverToken(String accessToken) throws UnsupportedEncodingException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.set("grant_type", "delete");
+        params.set("client_id", clientId);
+        params.set("client_secret", clientSecret);
+
+        //UnsupportedEncodingException
+        params.set("access_token", URLEncoder.encode(accessToken, "UTF-8"));//네이버 토큰 갱신, 삭제시 액세스 토큰 url 인코딩 필요
+        params.set("service_provider", "NAVER");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        ResponseEntity<String> response = restTemplate
+                .postForEntity(tokenUrl, request, String.class);
+
+        try {
+            //JsonProcessingException
+            DeleteNaverTokenRes deleteNaverTokenRes = objectMapper.readValue(response.getBody(), DeleteNaverTokenRes.class);
+            System.out.println(deleteNaverTokenRes.toString());
+            return deleteNaverTokenRes;
+        } catch (Exception e) {
+            e.printStackTrace();//TODO : Exception 처리
+        }
+        return null;
+    }*/
+
+    @Transactional
     public LoginRes createUser(GetNaverProfileRes getNaverProfileRes) throws BaseException {
         Boolean isNewUser = true;
-        String roleStr;
-        JwtTokenDto jwtTokenDto;
+        User user;
+
         Optional<User> optionalUser = userRepository.findByNaverIdAndStatusEquals(getNaverProfileRes.getResponse().getId(), ACTIVE);
+
         if(optionalUser.isPresent()) {
             isNewUser = false;//기존 가입 회원
-            roleStr = optionalUser.get().getRole().name();
-            jwtTokenDto = jwtIssuer.createToken(optionalUser.get().getUserIdx(), roleStr);
+            user = optionalUser.get();
         }
-        else {
-            User user = userRepository.save(getNaverProfileRes.getResponse().toEntity());
-            roleStr = user.getRole().name();
-            jwtTokenDto = jwtIssuer.createToken(user.getUserIdx(), roleStr);
-        }
+        else user = userRepository.save(getNaverProfileRes.getResponse().toEntity());
+        log.info("*** user : {}", user);
+
+        JwtTokenDto jwtTokenDto = jwtIssuer.createTokens(user.getUserIdx(), user.getRole().name());
+        user.setRefreshToken(jwtTokenDto.getRefreshToken());
+        userRepository.save(user);
 
         System.out.println(authService.getUserIdx(jwtTokenDto.getAccessToken()));
+        return LoginRes.builder()
+                .accessToken(jwtTokenDto.getAccessToken())
+                .refreshToken(jwtTokenDto.getRefreshToken())
+                .exp(jwtTokenDto.getExp())
+                .isNewUser(isNewUser)
+                .role(user.getRole().name()).build();
 
-        return LoginRes.builder().jwt(jwtTokenDto).isNewUser(isNewUser).role(roleStr).build();
+    }
 
+    public GetRefreshedAccessTokenRes refresh(String refreshToken) throws BaseException {
+        User user = userRepository.findById(authService.getUserIdx(refreshToken)).orElseThrow(()-> new BaseException(INVALID_USER));
+        if(!user.getRefreshToken().equals(refreshToken)) throw new BaseException(UNMATCHED_REFRESH_TOKEN);
+        if(!jwtIssuer.validateToken(refreshToken)) throw new CustomUnauthorizedException(INVALID_TOKEN.getMessage());
+        return jwtIssuer.createRefreshedAccessToken(user.getUserIdx(), user.getRole().name());
     }
 
 

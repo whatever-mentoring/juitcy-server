@@ -26,8 +26,12 @@ public class GetJunyQuestionResponse {
     public static GetJunyQuestionResponse fromPost(Post post, Long answerCount, Boolean isJuicy) {
         LocalDate targetDate = post.getCreatedDate().toLocalDate().plusDays(3);
         LocalDateTime date = (isJuicy)? post.getLastModifiedDate() : post.getCreatedDate();
+        String title;
+        if(post.getTitle().length() > 22)
+            title = post.getTitle().substring(0, 22) + "...";
+        else title = post.getTitle();
         return GetJunyQuestionResponse.builder()
-                .title(post.getTitle().substring(0, Math.min(post.getTitle().length(), 20)))
+                .title(title)
                 .postIdx(post.getPostIdx())
                 .date(date.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
                 .category(post.getCategory().getKrName())

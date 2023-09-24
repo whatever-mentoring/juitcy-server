@@ -30,7 +30,7 @@ public class CommentController {
 
     @ResponseBody
     @PatchMapping("/{commentIdx}")
-    public BaseResponse<String> updateComment(@PathVariable Long commentIdx, @RequestBody UpdateCommentReq updateCommentReq) throws BaseException {
+    public BaseResponse<String> updateComment(HttpServletRequest request, @PathVariable Long commentIdx, @RequestBody UpdateCommentReq updateCommentReq) throws BaseException {
         commentService.updateComment(commentIdx, updateCommentReq);
         return new BaseResponse<>(SUCCESS);
     }
