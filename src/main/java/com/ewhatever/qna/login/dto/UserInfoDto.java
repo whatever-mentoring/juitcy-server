@@ -25,7 +25,11 @@ public class UserInfoDto {
     private String id;//중복 확인을 위한 유니크 String
 
     public User toEntity() {
-        Role role = (Integer.valueOf(this.birthyear) > LocalDate.now().getYear() - 49)? Role.JUNY : Role.SINY;
-        return User.builder().name(this.name).provider("naver").role(role).naverId(this.id).build();
+        Role role = (Integer.valueOf(this.birthyear) > LocalDate.now().getYear() - 49)? Role.Juni : Role.Cyni;
+        return User.builder()
+                .name(this.name)
+                .role(role)
+                .naverId(this.id)
+                .build();
     }
 }

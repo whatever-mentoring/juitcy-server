@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
 import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
-import static com.ewhatever.qna.common.enums.Role.JUNY;
+import static com.ewhatever.qna.common.enums.Role.Juni;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class QuestionService {
             User questioner = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Category category = Category.valueOf(postQuestionReq.getCategory());
 
-            if (questioner.getRole().equals(JUNY)) {
+            if (questioner.getRole().equals(Juni)) {
                 Post question = Post.builder()
                         .title(postQuestionReq.getTitle())
                         .content(postQuestionReq.getContent())

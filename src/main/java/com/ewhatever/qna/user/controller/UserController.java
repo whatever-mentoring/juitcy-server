@@ -2,6 +2,7 @@ package com.ewhatever.qna.user.controller;
 
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
+import com.ewhatever.qna.login.CustomUnauthorizedException;
 import com.ewhatever.qna.user.dto.GetCommentResponse;
 import com.ewhatever.qna.user.dto.GetJunyQuestionResponse;
 import com.ewhatever.qna.user.dto.GetScrapResponse;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.ewhatever.qna.common.Base.BaseResponseStatus.INVALID_TOKEN;
 
 @RequestMapping("/users")
 @RestController
