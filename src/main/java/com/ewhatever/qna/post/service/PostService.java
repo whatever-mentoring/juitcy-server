@@ -6,6 +6,8 @@ import com.ewhatever.qna.comment.entity.Comment;
 import com.ewhatever.qna.comment.repository.CommentRepository;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.enums.Category;
+import com.ewhatever.qna.login.CustomUnauthorizedException;
+import com.ewhatever.qna.login.JwtIssuer;
 import com.ewhatever.qna.login.dto.AuthService;
 import com.ewhatever.qna.post.dto.GetPostRes;
 import com.ewhatever.qna.post.dto.GetPostsRes;
@@ -43,6 +45,12 @@ public class PostService {
     private final CommentRepository commentRepository;
 
     private final AuthService authService;
+
+    private final JwtIssuer jwtIssuer;
+    //tmp
+    public void validate(String token) {
+        jwtIssuer.validateToken(token);
+    }
     /**
      * 쥬시글 전체 목록 조회
      * @param page
@@ -144,6 +152,7 @@ public class PostService {
      * @throws BaseException
      */
     public GetPostRes getPost(String token, Long postIdx) throws BaseException {
+        if(!jwtIssuer.validateToken(token)) throw new CustomUnauthorizedException(INVALID_TOKEN.getMessage());
         try {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
             User user = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
@@ -204,6 +213,7 @@ public class PostService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void scrapPost(String token, Long postIdx) throws BaseException {
+        if(!jwtIssuer.validateToken(token)) throw new CustomUnauthorizedException(INVALID_TOKEN.getMessage());
         try {
             Post post = postRepository.findById(postIdx).orElseThrow(() -> new BaseException(INVALID_POST_IDX));
             User user = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));

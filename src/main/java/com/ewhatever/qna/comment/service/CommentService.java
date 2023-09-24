@@ -5,6 +5,8 @@ import com.ewhatever.qna.comment.dto.UpdateCommentReq;
 import com.ewhatever.qna.comment.entity.Comment;
 import com.ewhatever.qna.comment.repository.CommentRepository;
 import com.ewhatever.qna.common.Base.BaseException;
+import com.ewhatever.qna.login.CustomUnauthorizedException;
+import com.ewhatever.qna.login.JwtIssuer;
 import com.ewhatever.qna.login.dto.AuthService;
 import com.ewhatever.qna.post.entity.Post;
 import com.ewhatever.qna.post.repository.PostRepository;
@@ -24,8 +26,11 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final AuthService authService;
+
+    private final JwtIssuer jwtIssuer;
     @Transactional
     public void addComment(String token, PostCommentReq postCommentReq) throws BaseException {//TODO : service를 어디서 호출해야할지..
+        if(!jwtIssuer.validateToken(token)) throw new CustomUnauthorizedException(INVALID_TOKEN.getMessage());
         Post post = postRepository.findById(postCommentReq.getPostIdx()).orElseThrow(()-> new BaseException(INVALID_POST_IDX));
         Comment comment = Comment.builder().content(postCommentReq.getContent())
                 .post(post)

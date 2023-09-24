@@ -3,6 +3,7 @@ package com.ewhatever.qna.login;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.login.dto.JwtTokenDto;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -14,7 +15,10 @@ public class JwtAuthProvider {
     //private final UserDetailsService userDetailsService;
     private final JwtIssuer jwtIssuer;
 
+
+
     // 인증용
+    /*
     public boolean validateToken(String token) throws BaseException {
         if (!StringUtils.hasText(token)) {
             return false;
@@ -24,12 +28,10 @@ public class JwtAuthProvider {
             return false;
         }
 
-        /*
-         * 추가 검증 로직
-         */
-
+        //추가 검증 로직
         return true;
     }
+
 
     // 재발급용
     public boolean validateToken(JwtTokenDto jwtDto) throws BaseException {
@@ -41,13 +43,11 @@ public class JwtAuthProvider {
         Claims accessClaims = jwtIssuer.getClaims(jwtDto.getAccessToken());
         Claims refreshClaims = jwtIssuer.getClaims(jwtDto.getRefreshToken());
 
-        /*
-         * 추가 검증 로직
-         */
+        //추가 검증 로직
 
         return accessClaims != null && refreshClaims != null
                 && jwtIssuer.getSubject(accessClaims).equals(jwtIssuer.getSubject(refreshClaims));
-    }
+    }*/
 
 
     //TODO : userIdxStr 수정

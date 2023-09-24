@@ -1,6 +1,7 @@
 package com.ewhatever.qna.login.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 @NoArgsConstructor
@@ -8,6 +9,7 @@ import lombok.*;
 @ToString
 @Setter
 @Getter
+@JsonPropertyOrder({"access_token", "refresh_token", "token_type", "expires_in", "error", "error_description"})
 public class NaverTokenDto {
 
     @JsonProperty("access_token")
@@ -21,6 +23,13 @@ public class NaverTokenDto {
 
     @JsonProperty("expires_in")
     private String expiredIn;
+
+    @JsonProperty("error")
+    private String error;
+
+    @JsonProperty("error_description")
+    private String errorDescription;
+
 
 
 }

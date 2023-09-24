@@ -2,6 +2,7 @@ package com.ewhatever.qna.post.controller;
 
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
+import com.ewhatever.qna.login.JwtIssuer;
 import com.ewhatever.qna.post.dto.GetPostRes;
 import com.ewhatever.qna.post.dto.GetPostsRes;
 import com.ewhatever.qna.post.service.PostService;
@@ -19,13 +20,15 @@ import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
 public class PostController {
     private final PostService postService;
 
+
     /**
      * [GET] 쥬시글 목록 조회
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<Page<GetPostsRes>> getPosts(Pageable page, @RequestParam(required = false) String category, @RequestParam(required = false) String searchWord) {
+    public BaseResponse<Page<GetPostsRes>> getPosts(HttpServletRequest request, Pageable page, @RequestParam(required = false) String category, @RequestParam(required = false) String searchWord) {
         try {
+            postService.validate(request.getHeader("Authorization"));
             if (category.isBlank()) { // 카테고리 X
                 if (searchWord.isBlank()) return new BaseResponse<>(postService.getPosts(page)); // 전체 목록 조회
                 else return new BaseResponse<>(postService.getPostsBySearchWord(searchWord, page));
