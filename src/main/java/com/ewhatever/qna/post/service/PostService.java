@@ -6,6 +6,7 @@ import com.ewhatever.qna.comment.entity.Comment;
 import com.ewhatever.qna.comment.repository.CommentRepository;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.enums.Category;
+import com.ewhatever.qna.common.enums.Role;
 import com.ewhatever.qna.login.CustomUnauthorizedException;
 import com.ewhatever.qna.login.JwtIssuer;
 import com.ewhatever.qna.login.dto.AuthService;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
-import static com.ewhatever.qna.common.Constant.Role.SENIOR;
 import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
 import static com.ewhatever.qna.common.Constant.Status.INACTIVE;
 
@@ -185,7 +185,7 @@ public class PostService {
         for (Comment comment : comments) {
             GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(
                     comment.getCommentIdx(),
-                    getWriter(comment.getWriter().getRole().toString()),
+                    getWriter(comment.getWriter().getRole().name()),
                     comment.getCreatedDate(),
                     comment.getContent(),
                     isWriter(user, comment)
@@ -202,7 +202,7 @@ public class PostService {
 
     // 댓글 작성자
     private String getWriter(String role) {
-        if (role.equals(SENIOR)) return "익명의 시니";
+        if (role.equals(Role.Cyni.name())) return "익명의 시니";
         else return "익명의 쥬니";
     }
 
