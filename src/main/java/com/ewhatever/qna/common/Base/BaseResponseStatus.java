@@ -32,6 +32,10 @@ public enum BaseResponseStatus {
     UNMATCHED_REFRESH_TOKEN(false, 2404, "리프레시 토큰이 일치하지 않습니다."),
 
     // question(2500-2501)
+    SHORT_QUESTION_CONTENT(false, 2500, "질문 내용은 최소 10자여야 합니다."),
+    LONG_QUESTION_CONTENT(false, 2501, "질문 내용은 최대 1000자여야 합니다."),
+    SHORT_QUESTION_TITLE(false, 2502, "질문 제목은 최소 10자여야 합니다."),
+    LONG_QUESTION_TITLE(false, 2503, "질문 제목은 최대 50자여야 합니다."),
 
     // scrap(2600-2699)
     ZERO_SCRAP_COUNT(false, 2600, "이미 스크랩수가 0입니다."),

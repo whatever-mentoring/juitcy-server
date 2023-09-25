@@ -34,19 +34,24 @@ public class QuestionService {
         try {
             User questioner = userRepository.findByUserIdxAndStatusEquals(authService.getUserIdx(token), ACTIVE).orElseThrow(() -> new BaseException(INVALID_USER));
             Category category = Category.valueOf(postQuestionReq.getCategory());
-
-            if (questioner.getRole().equals(Juni)) {
-                Post question = Post.builder()
-                        .title(postQuestionReq.getTitle())
-                        .content(postQuestionReq.getContent())
-                        .category(category)
-                        .questioner(questioner)
-                        .scrapCount(0L)
-                        .commentCount(0L)
-                        .isJuicy(false)
-                        .build();
-                postRepository.save(question);
-            } else throw new BaseException(NO_JUNIOR_ROLE);
+            if (postQuestionReq.getContent().length() < 10) throw new BaseException(SHORT_QUESTION_CONTENT);
+            else if (postQuestionReq.getContent().length() > 1000) throw new BaseException(LONG_QUESTION_CONTENT);
+            else if (postQuestionReq.getTitle().length() < 5) throw new BaseException(SHORT_QUESTION_TITLE);
+            else if (postQuestionReq.getTitle().length() > 50) throw new BaseException(LONG_QUESTION_TITLE);
+            else {
+                if (questioner.getRole().equals(Juni)) {
+                    Post question = Post.builder()
+                            .title(postQuestionReq.getTitle())
+                            .content(postQuestionReq.getContent())
+                            .category(category)
+                            .questioner(questioner)
+                            .scrapCount(0L)
+                            .commentCount(0L)
+                            .isJuicy(false)
+                            .build();
+                    postRepository.save(question);
+                } else throw new BaseException(NO_JUNIOR_ROLE);
+            }
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
