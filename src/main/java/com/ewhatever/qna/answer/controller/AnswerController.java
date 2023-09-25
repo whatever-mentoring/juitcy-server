@@ -1,7 +1,6 @@
 package com.ewhatever.qna.answer.controller;
 
 import com.ewhatever.qna.answer.dto.PostAnswerReq;
-import com.ewhatever.qna.answer.repository.AnswerRepository;
 import com.ewhatever.qna.answer.service.AnswerService;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
@@ -21,8 +20,7 @@ public class AnswerController {
      */
     @ResponseBody
     @PostMapping("")
-    public BaseResponse<String> addAnswer(HttpServletRequest request,
-                                          @RequestBody PostAnswerReq postAnswerReq) {
+    public BaseResponse<String> addAnswer(HttpServletRequest request, @RequestBody PostAnswerReq postAnswerReq) {
         try {
             answerService.addAnswer(request.getHeader("Authorization"), postAnswerReq);
             return new BaseResponse<>(SUCCESS);
