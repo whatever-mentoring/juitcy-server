@@ -19,8 +19,8 @@ import java.util.Date;
 public class JwtIssuer {
 
     private static String SECRET_KEY = "secretKeyForJsonWebTokenTutorial";
-    public static final long EXPIRE_TIME = 1000 * 60 * 2;//5분 // TODO : 만료시간
-    public static final long REFRESH_EXPIRE_TIME = 1000 * 60 * 15;//15분 //TODO : 만료시간 재설정
+    public static final long EXPIRE_TIME = 1000 * 60 * 30;//30분
+    public static final long REFRESH_EXPIRE_TIME = 1000 * 60 * 1440;//24시간
     public static final String ROLE = "role";
 
     @PostConstruct
