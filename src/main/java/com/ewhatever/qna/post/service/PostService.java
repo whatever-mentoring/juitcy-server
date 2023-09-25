@@ -180,7 +180,7 @@ public class PostService {
     // 댓글 list 조회
     private List<GetPostRes.CommentDto> getCommentList(Post post, User user) {
         List<GetPostRes.CommentDto> commentList = new ArrayList<>();
-        List<Comment> comments = commentRepository.findAllByPostAndStatusEqualsOrderByCreatedDateDesc(post, ACTIVE); // 최신순
+        List<Comment> comments = commentRepository.findAllByPostAndStatusEqualsOrderByCreatedDate(post, ACTIVE); // 오래된 순
 
         for (Comment comment : comments) {
             GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(
@@ -197,7 +197,7 @@ public class PostService {
 
     // 댓글 작성자 여부
     private Boolean isWriter(User user, Comment comment) {
-        return comment.getWriter().equals(user);
+        return comment.getWriter().equals(user);  // TODO: 이거 왜 이렇게 비교하지
     }
 
     // 댓글 작성자
