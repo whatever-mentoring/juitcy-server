@@ -2,15 +2,12 @@ package com.ewhatever.qna.user.entity;
 
 import com.ewhatever.qna.common.Base.BaseEntity;
 import com.ewhatever.qna.common.enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.util.Collections;
 
 @Entity
 @Getter
@@ -35,7 +32,7 @@ public class User extends BaseEntity {
     private String refreshToken;//jwt refreshToken
 
     @NotNull
-    @Enumerated(value = EnumType.ORDINAL)//TODO : EnumType 수정
+    @Enumerated(value = EnumType.STRING)
     private Role role;
 
     @NotNull
@@ -44,45 +41,4 @@ public class User extends BaseEntity {
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
-
-    /*
-    @JsonIgnore
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(this.role.getAuthority()));
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public String getUsername() {
-        return String.valueOf(userIdx);
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isEnabled() {
-        return true;
-    }*/
 }
