@@ -17,6 +17,8 @@ public enum BaseResponseStatus {
 
     // comment(2100-2199)
     INVALID_COMMENT_IDX(false, 2100, "잘못된 commentIdx입니다."),
+    SHORT_COMMENT_CONTENT(false, 2101, "댓글은 최소 2자여야 합니다."),
+    LONG_COMMENT_CONTENT(false, 2102, "댓글은 최대 500자여야 합니다."),
 
     // notification(2200-2299)
 

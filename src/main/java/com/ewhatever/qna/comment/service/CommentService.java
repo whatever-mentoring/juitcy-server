@@ -31,6 +31,9 @@ public class CommentService {
     @Transactional
     public void addComment(String token, PostCommentReq postCommentReq) throws BaseException {//TODO : service를 어디서 호출해야할지..
         if(!jwtIssuer.validateToken(token)) throw new CustomUnauthorizedException(INVALID_TOKEN.getMessage());
+
+        validateCommentLength(postCommentReq.getContent());
+
         Post post = postRepository.findById(postCommentReq.getPostIdx()).orElseThrow(()-> new BaseException(INVALID_POST_IDX));
         Comment comment = Comment.builder().content(postCommentReq.getContent())
                 .post(post)
@@ -54,5 +57,16 @@ public class CommentService {
         //TODO : 작성자가 아니면 Exception 발생
         Comment comment = commentRepository.findById(commentIdx).orElseThrow(()-> new BaseException(INVALID_COMMENT_IDX));
         comment.setContent(updateCommentReq.getContent());
+    }
+
+    private void validateCommentLength(String content) throws BaseException {
+        int minCommentLength = 2;
+        int maxCommentLength = 500;
+
+        int curLength = content.length();
+        if(curLength < minCommentLength)
+            throw new BaseException(SHORT_COMMENT_CONTENT);
+        else if(curLength > maxCommentLength)
+            throw new BaseException(LONG_COMMENT_CONTENT);
     }
 }
