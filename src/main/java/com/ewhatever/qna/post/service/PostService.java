@@ -59,11 +59,11 @@ public class PostService {
      */
     public Page<GetPostsRes> getPosts(Pageable page) throws BaseException {
         try {
-            Page<Post> postPage = postRepository.findAllByIsJuicyTrueOrderByLastModifiedDateDesc(page); // 최신순 조회
+            Page<Post> postPage = postRepository.findAllByIsJuicyTrueOrderByJuicyDateDesc(page); // 최신순 조회
             return postPage.map(post -> new GetPostsRes(
                     post.getPostIdx(),
                     post.getCategory().getKrName(),
-                    post.getLastModifiedDate(),
+                    post.getJuicyDate(),
                     post.getScrapCount(),
                     post.getCommentCount(),
                     getCardList(post) // 질문제목, 질문상세, 답변(0-3개)
@@ -98,11 +98,11 @@ public class PostService {
             Category categoryName = Category.valueOf(category.toUpperCase());
             boolean postExists = postRepository.existsByCategoryAndIsJuicyTrue(categoryName);
             if (postExists) {
-                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyTrueOrderByLastModifiedDateDesc(categoryName, page); // 최신순 조회
+                Page<Post> postPage = postRepository.findAllByCategoryAndIsJuicyTrueOrderByJuicyDateDesc(categoryName, page); // 최신순 조회
                 return postPage.map(post -> new GetPostsRes(
                         post.getPostIdx(),
                         post.getCategory().getKrName(),
-                        post.getLastModifiedDate(),
+                        post.getJuicyDate(),
                         post.getScrapCount(),
                         post.getCommentCount(),
                         getCardList(post) // 질문제목, 질문상세, 답변(0-3개)
@@ -132,7 +132,7 @@ public class PostService {
                         .map(searchPost -> new GetPostsRes(
                                 searchPost.getPostIdx(),
                                 searchPost.getCategory().getKrName(),
-                                searchPost.getLastModifiedDate(),
+                                searchPost.getJuicyDate(),
                                 searchPost.getScrapCount(),
                                 searchPost.getCommentCount(),
                                 getCardList(searchPost)
@@ -159,7 +159,7 @@ public class PostService {
             return new GetPostRes(
                     post.getCategory().getKrName(),
                     getCardList(post),
-                    post.getLastModifiedDate(),
+                    post.getJuicyDate(),
                     post.getCommentCount(),
                     post.getScrapCount(),
                     isScrap(user, post),
@@ -260,16 +260,18 @@ public class PostService {
     public void checkJuicy() {
         List<Post> postList = postRepository.findAllByIsJuicyFalseOrderByCreatedDate(); // 오래된 순으로 조회
         for (Post post : postList) {
-            LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            LocalDateTime currentDateTimeTruncatedToHour = currentDateTime.truncatedTo(ChronoUnit.HOURS);
 //            System.out.println("현재 시간: " + currentDateTime);
             LocalDateTime questionDateTime = post.getCreatedDate().truncatedTo(ChronoUnit.HOURS);
 //            System.out.println("질문 등록 시간: " + questionDateTime);
 //            int compareResult = currentDateTime.compareTo(questionDateTime);
 //            System.out.println("비교 결과: " + compareResult);
 //            Period period = Period.between(questionDate, currentDate);
-            long timeGap = ChronoUnit.HOURS.between(questionDateTime, currentDateTime);
+            long timeGap = ChronoUnit.HOURS.between(questionDateTime, currentDateTimeTruncatedToHour);
             if (timeGap == 72) {
                 post.setIsJuicy(true);
+                post.setJuicyDate(currentDateTime);
                 postRepository.save(post);
             }
         }

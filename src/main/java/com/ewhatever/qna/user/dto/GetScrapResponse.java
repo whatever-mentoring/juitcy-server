@@ -43,7 +43,7 @@ public class GetScrapResponse {
                 .content(content)
                 .commentCount(post.getCommentCount())
                 .scrapCount(post.getScrapCount())
-                .date(post.getLastModifiedDate().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
+                .date(post.getJuicyDate().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm")))
                 .build();
     }
 }
