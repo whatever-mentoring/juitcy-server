@@ -11,5 +11,5 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Long countByWriter_UserIdxAndStatusEquals(Long userIdx, String status);
     Page<Comment> findByWriter_UserIdxAndStatusEquals(Long userIdx, String status, Pageable pageable);
-    List<Comment> findAllByPostAndStatusEqualsOrderByCreatedDateDesc(Post post, String status);
+    List<Comment> findAllByPostAndStatusEqualsOrderByCreatedDate(Post post, String status);
 }
