@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
 import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
 import static com.ewhatever.qna.common.enums.Role.Cyni;
@@ -52,6 +54,7 @@ public class AnswerService {
                     // 3번째 답변이면 쥬시글로 전환
                     if (currentAnswerCount == 3) {
                         post.setIsJuicy(true);
+                        post.setJuicyDate(LocalDateTime.now());
                     }
                     postRepository.save(post);
                 } else throw new BaseException(ALREADY_JUICY_POST);

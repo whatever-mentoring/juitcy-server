@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -57,11 +59,17 @@ public class Post extends BaseEntity {
     @Builder.Default
     private Boolean isJuicy = false;
 
+    private LocalDateTime juicyDate;
+
     public void setScrapCount(Long scrapCount) {
         this.scrapCount = scrapCount;
     }
     public void setCommentCount(Long commentCount) { this.commentCount = commentCount; }
     public void setIsJuicy(Boolean isJuicy) { this.isJuicy = isJuicy; }
+
+    public void setJuicyDate(LocalDateTime juicyDate) {
+        this.juicyDate = juicyDate;
+    }
 }
 
 
