@@ -36,7 +36,7 @@ public class Post extends BaseEntity {
     private String content;
 
     @NotNull
-    @Enumerated(value = EnumType.ORDINAL)
+    @Enumerated(value = EnumType.STRING)
     private Category category;
 
     @NotNull
