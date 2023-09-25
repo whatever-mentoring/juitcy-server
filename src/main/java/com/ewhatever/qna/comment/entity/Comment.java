@@ -25,7 +25,7 @@ public class Comment extends BaseEntity {
     private Long commentIdx;
 
     @NotNull
-    @Size(max = 500)
+    @Size(min = 2, max = 500)
     private String content;
 
     @NotNull
