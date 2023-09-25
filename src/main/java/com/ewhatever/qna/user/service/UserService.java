@@ -58,13 +58,13 @@ public class UserService {
         checkSinyRole(user.getRole());
         List<Sort.Order> sorts = new ArrayList<>();
         if(status.equals("completed")) {//쥬시 완료
-            sorts.add(Sort.Order.desc("post_LastModifiedDate"));
+            sorts.add(Sort.Order.desc("post_JuicyDate"));
             Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
             return answerRepository.findByAnswerer_UserIdxAndPost_IsJuicyTrueAndStatusEquals(user.getUserIdx(), "active", pageable).map(answer ->
                     GetSinyAnswerResponse.fromAnswer(answer, 3L, true));
         }
         else {//쥬시 대기
-            sorts.add(Sort.Order.desc("createdDate"));
+            sorts.add(Sort.Order.asc("createdDate"));
             Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
             return answerRepository.findByAnswerer_UserIdxAndPost_IsJuicyFalseAndStatusEquals(user.getUserIdx(), "active", pageable).map(answer ->
                     GetSinyAnswerResponse.fromAnswer(answer, answerRepository.countByPost_PostIdxAndStatusEquals(answer.getPost().getPostIdx(), "active"), false));
@@ -78,13 +78,13 @@ public class UserService {
         checkJunyRole(user.getRole());
         List<Sort.Order> sorts = new ArrayList<>();
         if(status.equals("completed")) {//쥬시 완료
-            sorts.add(Sort.Order.desc("lastModifiedDate"));
+            sorts.add(Sort.Order.desc("juicyDate"));
             Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
             return postRepository.findByQuestioner_UserIdxAndIsJuicyTrueAndStatusEquals(user.getUserIdx(),"active", pageable).map(post ->
                     GetJunyQuestionResponse.fromPost(post, 3L, true));
         }
         else {//쥬시 대기
-            sorts.add(Sort.Order.desc("createdDate"));
+            sorts.add(Sort.Order.asc("createdDate"));
             Pageable pageable = PageRequest.of(Math.max(requestPageNum-1,  0), 10, Sort.by(sorts));
             return postRepository.findByQuestioner_UserIdxAndIsJuicyFalseAndStatusEquals(user.getUserIdx(), "active", pageable).map(post ->
                     GetJunyQuestionResponse.fromPost(post, answerRepository.countByPost_PostIdxAndStatusEquals(post.getPostIdx(), "active"), false));
