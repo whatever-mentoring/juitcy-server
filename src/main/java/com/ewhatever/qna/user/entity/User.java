@@ -1,22 +1,22 @@
 package com.ewhatever.qna.user.entity;
 
-import com.ewhatever.qna.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.ewhatever.qna.common.Base.BaseEntity;
+import com.ewhatever.qna.common.enums.Role;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
+@DynamicUpdate
+@ToString
 public class User extends BaseEntity {
 
     @Id
@@ -29,12 +29,16 @@ public class User extends BaseEntity {
     @NotNull
     @Size(max = 30)
     private String name;
+    private String refreshToken;//jwt refreshToken
 
     @NotNull
-    private String provider;
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 
     @NotNull
-    @Size(max = 30)
-    private String role;
+    private String naverId;//TODO : VARCHAR 크기 수정
 
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
