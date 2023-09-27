@@ -2,6 +2,7 @@ package com.ewhatever.qna.answer.repository;
 
 import com.ewhatever.qna.answer.entity.Answer;
 import com.ewhatever.qna.post.entity.Post;
+import com.ewhatever.qna.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     Page<Answer> findByAnswerer_UserIdxAndPost_IsJuicyFalseAndStatusEquals(Long userIdx, String status, Pageable pageable);
     Long countByPost_PostIdxAndStatusEquals(Long postIdx, String status);
     Long countByPost(Post post);
+//    List<Answer> findByPostAndUser(Post post, User user);
+    Boolean existsByPostAndAnswerer(Post post, User answerer);
 }

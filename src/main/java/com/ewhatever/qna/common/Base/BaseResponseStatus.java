@@ -14,6 +14,7 @@ public enum BaseResponseStatus {
      */
     // answer(2000-2099)
     ALREADY_JUICY_POST(false, 2000, "이미 쥬시글로 등록된 post입니다,"),
+    ALREADY_ANSWERED(false, 2001, "이미 답변한 질문입니다."),
 
     // comment(2100-2199)
     INVALID_COMMENT_IDX(false, 2100, "잘못된 commentIdx입니다."),

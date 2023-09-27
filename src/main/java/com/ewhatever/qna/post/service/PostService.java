@@ -197,7 +197,7 @@ public class PostService {
 
     // 댓글 작성자 여부
     private Boolean isWriter(User user, Comment comment) {
-        return comment.getWriter().equals(user);  // TODO: 이거 왜 이렇게 비교하지
+        return comment.getWriter().equals(user);
     }
 
     // 댓글 작성자

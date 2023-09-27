@@ -38,11 +38,11 @@ public class QuestionController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<Page<GetQuestionsRes>> getQuestions(@RequestParam(required = false) String category, Pageable page) {
+    public BaseResponse<Page<GetQuestionsRes>> getQuestions(HttpServletRequest request, @RequestParam(required = false) String category, Pageable page) {
         try {
             if (category.isBlank()) { // 전체 조회
-                return new BaseResponse<>(questionService.getQuestions(page));
-            } else return new BaseResponse<>(questionService.getQuestionsByCategory(category, page)); // 카테고리 조회
+                return new BaseResponse<>(questionService.getQuestions(request.getHeader("Authorization"), page));
+            } else return new BaseResponse<>(questionService.getQuestionsByCategory(request.getHeader("Authorization"), category, page)); // 카테고리 조회
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
