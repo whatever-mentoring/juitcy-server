@@ -33,6 +33,7 @@ public enum BaseResponseStatus {
     NO_JUNIOR_ROLE(false, 2402, "쥬니가 아닙니다."),
     INVALID_TOKEN(false, 2403, "유효한 토큰이 아닙니다"),
     UNMATCHED_REFRESH_TOKEN(false, 2404, "리프레시 토큰이 일치하지 않습니다."),
+    INVALID_EMAIL(false, 2405, "잘못된 이메일 형식입니다."),
 
     // question(2500-2501)
     SHORT_QUESTION_CONTENT(false, 2500, "질문 내용은 최소 10자여야 합니다."),

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class MailDto {
+public class PostMailReq {
     private String title;
     private String contentTitle;
     private String content;
