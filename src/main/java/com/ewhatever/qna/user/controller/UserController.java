@@ -2,21 +2,21 @@ package com.ewhatever.qna.user.controller;
 
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
-import com.ewhatever.qna.login.CustomUnauthorizedException;
+import com.ewhatever.qna.user.dto.GetSubscriptionRes;
+import com.ewhatever.qna.user.dto.PostSubscriptionReq;
 import com.ewhatever.qna.user.dto.GetCommentResponse;
 import com.ewhatever.qna.user.dto.GetJunyQuestionResponse;
 import com.ewhatever.qna.user.dto.GetScrapResponse;
 import com.ewhatever.qna.user.dto.GetSinyAnswerResponse;
 import com.ewhatever.qna.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import static com.ewhatever.qna.common.Base.BaseResponseStatus.INVALID_TOKEN;
+import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
 
 @RequestMapping("/users")
 @RestController
@@ -56,5 +56,28 @@ public class UserController {
     public BaseResponse<Page<GetScrapResponse>> getMyScraps(HttpServletRequest request,
                                                             @RequestParam(value = "requestPageNum", defaultValue = "0") int requestPageNum) throws BaseException{
         return new BaseResponse<>(userService.getMyScraps(request.getHeader("Authorization"), requestPageNum));
+    }
+
+
+    @ResponseBody
+    @PostMapping("/subscription")
+    public BaseResponse<String> subscribeLetter(HttpServletRequest request,
+                                                @Valid @RequestBody PostSubscriptionReq postSubscriptionReq,
+                                                BindingResult bindingResult) throws BaseException {
+        userService.subscribeLetter(request.getHeader("Authorization"), postSubscriptionReq, bindingResult);
+        return new BaseResponse<>(SUCCESS);
+    }
+
+    @ResponseBody
+    @DeleteMapping("/subscription")
+    public BaseResponse<String> deleteSubscriptionLetter(HttpServletRequest request) throws BaseException {
+        userService.deleteSubscriptionLetter(request.getHeader("Authorization"));
+        return new BaseResponse<>(SUCCESS);
+    }
+
+    @ResponseBody
+    @GetMapping("/subscription")
+    public BaseResponse<GetSubscriptionRes> getSubscriptionInformation(HttpServletRequest request) throws BaseException {
+        return new BaseResponse<>(userService.getSubscriptionInformation(request.getHeader("Authorization")));
     }
 }

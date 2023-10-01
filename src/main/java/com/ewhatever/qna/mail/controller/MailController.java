@@ -1,13 +1,9 @@
-package com.ewhatever.qna.mail;
+package com.ewhatever.qna.mail.controller;
 
-import com.ewhatever.qna.comment.dto.PostCommentReq;
-import com.ewhatever.qna.comment.service.CommentService;
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
-import com.ewhatever.qna.mail.dto.MailDto;
+import com.ewhatever.qna.mail.dto.PostMailReq;
 import com.ewhatever.qna.mail.service.MailService;
-import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +18,8 @@ public class MailController {
 
     @ResponseBody
     @PostMapping
-    public BaseResponse<String> addComment(@RequestBody MailDto mailDto) throws BaseException {
-        mailService.sendMail(mailDto);
+    public BaseResponse<String> sendMail(@RequestBody PostMailReq postMailReq) throws BaseException {
+        mailService.sendMail(postMailReq);
         return new BaseResponse<>(SUCCESS);
     }
 

@@ -1,7 +1,8 @@
 package com.ewhatever.qna.mail.service;
 
 import com.ewhatever.qna.common.Base.BaseException;
-import com.ewhatever.qna.mail.dto.MailDto;
+import com.ewhatever.qna.mail.dto.PostMailReq;
+import com.ewhatever.qna.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
@@ -14,8 +15,10 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.HashMap;
+import java.util.List;
 
-import static com.ewhatever.qna.common.Base.BaseResponseStatus.MAIL_DELIVERY_ERROR;
+import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
+import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
 
 @Service
 @AllArgsConstructor
@@ -24,9 +27,9 @@ public class MailService {
 
     private JavaMailSender emailSender;
     private final SpringTemplateEngine templateEngine;
-
+    private final UserRepository userRepository;
     @Async
-    public void sendMail(MailDto mailDto) throws BaseException {
+    public void sendMail(PostMailReq postMailReq) throws BaseException {
 
         log.info("*** 메일 전송 시작 ***");
 
@@ -35,15 +38,16 @@ public class MailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             //메일 제목 설정
-            helper.setSubject(mailDto.getTitle());
+            helper.setSubject(postMailReq.getTitle());
 
-            //TODO : DB에서 읽어와서 나중에 구독한 사람들로 설정하기
-            helper.setTo(new String[]{"hahaha329@ewhain.net"});
+            List<String> emails = userRepository.findEmailByStatus(ACTIVE);
+            log.info("*** 메일 발송 대상 : {}", emails.toString());
+            helper.setTo(emails.toArray(new String[0]));
 
             //템플릿에 전달할 데이터 설정
             HashMap<String, String> emailValues = new HashMap<>();
-            emailValues.put("title", mailDto.getContentTitle());
-            emailValues.put("content", mailDto.getContent());
+            emailValues.put("title", postMailReq.getContentTitle());
+            emailValues.put("content", postMailReq.getContent());
 
 
             Context context = new Context();
@@ -62,7 +66,5 @@ public class MailService {
         }
 
             log.info("*** 메일 전송 완료 ***");
-
-
     }
 }
