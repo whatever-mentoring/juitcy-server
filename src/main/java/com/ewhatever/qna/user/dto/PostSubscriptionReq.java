@@ -1,4 +1,4 @@
-package com.ewhatever.qna.mail.dto;
+package com.ewhatever.qna.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

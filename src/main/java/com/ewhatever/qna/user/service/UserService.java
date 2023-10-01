@@ -8,6 +8,8 @@ import com.ewhatever.qna.common.enums.Role;
 import com.ewhatever.qna.login.CustomUnauthorizedException;
 import com.ewhatever.qna.login.JwtIssuer;
 import com.ewhatever.qna.login.dto.AuthService;
+import com.ewhatever.qna.user.dto.GetSubscriptionRes;
+import com.ewhatever.qna.user.dto.PostSubscriptionReq;
 import com.ewhatever.qna.post.repository.PostRepository;
 import com.ewhatever.qna.scrap.repository.ScrapRepository;
 import com.ewhatever.qna.user.dto.*;
@@ -20,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,5 +140,24 @@ public class UserService {
     private void checkSinyRole(Role role) throws BaseException {
         if(role.equals(Role.Cyni)) return;
         else throw new BaseException(NO_SENIOR_ROLE);
+    }
+
+    @Transactional
+    public void subscribeLetter(String token, PostSubscriptionReq postSubscriptionReq, BindingResult bindingResult) throws BaseException {
+        if(!jwtIssuer.validateToken(token)) throw new CustomUnauthorizedException(INVALID_TOKEN.getMessage());
+        if(bindingResult.hasErrors()) throw new BaseException(INVALID_EMAIL);
+        User user = userRepository.findById(authService.getUserIdx(token)).orElseThrow(()-> new BaseException(INVALID_USER));
+        user.setEmail(postSubscriptionReq.getEmail());
+    }
+
+    @Transactional
+    public void deleteSubscriptionLetter(String token) throws BaseException {
+        User user = userRepository.findById(authService.getUserIdx(token)).orElseThrow(()-> new BaseException(INVALID_USER));
+        user.setEmail(null);
+    }
+
+    public GetSubscriptionRes getSubscriptionInformation(String token) throws BaseException {
+        User user = userRepository.findById(authService.getUserIdx(token)).orElseThrow(()-> new BaseException(INVALID_USER));
+        return new GetSubscriptionRes(user);
     }
 }

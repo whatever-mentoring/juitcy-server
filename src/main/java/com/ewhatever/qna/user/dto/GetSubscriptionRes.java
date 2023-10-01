@@ -1,4 +1,4 @@
-package com.ewhatever.qna.mail.dto;
+package com.ewhatever.qna.user.dto;
 
 import com.ewhatever.qna.user.entity.User;
 import lombok.Getter;
