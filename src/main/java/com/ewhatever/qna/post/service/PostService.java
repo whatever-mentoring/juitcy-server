@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -185,11 +186,10 @@ public class PostService {
         for (Comment comment : comments) {
             GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(
                     comment.getCommentIdx(),
-                    getWriter(comment.getWriter().getRole().name()),
+                    getWriter(post, comment.getWriter()),
                     comment.getCreatedDate(),
                     comment.getContent(),
-                    isWriter(user, comment)
-            );
+                    isWriter(user, comment));
             commentList.add(commentDto);
         }
         return commentList;
@@ -200,10 +200,44 @@ public class PostService {
         return comment.getWriter().equals(user);
     }
 
+    // 댓글 작성자를 담을 리스트
+    private HashMap<User, Integer> cyniIndexMap = new HashMap<>();
+    private ArrayList<User> cyniCommentWriterList = new ArrayList<>();
+    private HashMap<User, Integer> juniIndexMap = new HashMap<>();
+    private ArrayList<User> juniCommetWriterList = new ArrayList<>();
+
     // 댓글 작성자
-    private String getWriter(String role) {
-        if (role.equals(Role.Cyni.name())) return "익명의 시니";
-        else return "익명의 쥬니";
+    private String getWriter(Post post, User commentWriter) {
+        List<Answer> answerList = answerRepository.findAllByPostOrderByCreatedDateDesc(post);
+
+        boolean isAnswerer = false;
+        for (Answer answer : answerList) {
+            if (commentWriter.equals(answer.getAnswerer())) {
+                isAnswerer = true;
+                break;
+            }
+        }
+
+        if (commentWriter.equals(post.getQuestioner())) return "질문자 쥬니";
+        else if (isAnswerer) return "답변자 시니";
+        else {
+            if (commentWriter.equals(Role.Cyni.name())) {
+                if (!cyniCommentWriterList.contains(commentWriter)) {
+                    cyniCommentWriterList.add(commentWriter);
+                }
+                int index = cyniCommentWriterList.indexOf(commentWriter) + 1;
+                cyniIndexMap.put(commentWriter, index);
+                return "익명의 시니" + index;
+            }
+            else {
+                if (!juniCommetWriterList.contains(commentWriter)) {
+                    juniCommetWriterList.add(commentWriter);
+                }
+                int index = juniCommetWriterList.indexOf(commentWriter) + 1;
+                juniIndexMap.put(commentWriter, index);
+                return "익명의 쥬니" + index;
+            }
+        }
     }
 
     /**

@@ -2,7 +2,6 @@ package com.ewhatever.qna.post.controller;
 
 import com.ewhatever.qna.common.Base.BaseException;
 import com.ewhatever.qna.common.Base.BaseResponse;
-import com.ewhatever.qna.login.JwtIssuer;
 import com.ewhatever.qna.post.dto.GetPostRes;
 import com.ewhatever.qna.post.dto.GetPostsRes;
 import com.ewhatever.qna.post.service.PostService;
@@ -19,7 +18,6 @@ import static com.ewhatever.qna.common.Base.BaseResponseStatus.SUCCESS;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-
 
     /**
      * [GET] 쥬시글 목록 조회
