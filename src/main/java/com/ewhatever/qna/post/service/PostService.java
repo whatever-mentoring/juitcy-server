@@ -27,9 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.ewhatever.qna.common.Base.BaseResponseStatus.*;
 import static com.ewhatever.qna.common.Constant.Status.ACTIVE;
@@ -185,11 +183,10 @@ public class PostService {
         for (Comment comment : comments) {
             GetPostRes.CommentDto commentDto = new GetPostRes.CommentDto(
                     comment.getCommentIdx(),
-                    getWriter(comment.getWriter().getRole().name()),
+                    getWriter(post, comment.getWriter()),
                     comment.getCreatedDate(),
                     comment.getContent(),
-                    isWriter(user, comment)
-            );
+                    isWriter(user, comment));
             commentList.add(commentDto);
         }
         return commentList;
@@ -200,10 +197,45 @@ public class PostService {
         return comment.getWriter().equals(user);
     }
 
+    // 댓글 작성자를 담을 list, map
+    private HashMap<User, Integer> cyniIndexMap = new HashMap<>();
+    private ArrayList<User> cyniCommentWriterList = new ArrayList<>();
+    private HashMap<User, Integer> juniIndexMap = new HashMap<>();
+    private ArrayList<User> juniCommentWriterList = new ArrayList<>();
+    private HashMap<User, Integer> answererIndexMap = new HashMap<>();
+
+
     // 댓글 작성자
-    private String getWriter(String role) {
-        if (role.equals(Role.Cyni.name())) return "익명의 시니";
-        else return "익명의 쥬니";
+    private String getWriter(Post post, User commentWriter) {
+        List<Answer> answerList = answerRepository.findAllByPostOrderByCreatedDateDesc(post);
+        for (Answer answer : answerList) {
+            if (!answererIndexMap.containsKey(answer.getAnswerer())) { // 답변자가 맵에 없으면 추가
+                answererIndexMap.put(answer.getAnswerer(), answererIndexMap.size() + 1);
+            }
+            if (commentWriter.equals(answer.getAnswerer())) { // 댓글 작성자가 답변자 시니인 경우 "답변자 시니+숫자" 반환
+                return "답변자 시니" + answererIndexMap.get(commentWriter);
+            }
+        }
+
+        if (commentWriter.equals(post.getQuestioner())) return "질문자 쥬니";
+        else {
+            if (commentWriter.equals(Role.Cyni.name())) {
+                if (!cyniCommentWriterList.contains(commentWriter)) {
+                    cyniCommentWriterList.add(commentWriter);
+                }
+                int index = cyniCommentWriterList.indexOf(commentWriter) + 1;
+                cyniIndexMap.put(commentWriter, index);
+                return "익명의 시니" + index;
+            }
+            else {
+                if (!juniCommentWriterList.contains(commentWriter)) {
+                    juniCommentWriterList.add(commentWriter);
+                }
+                int index = juniCommentWriterList.indexOf(commentWriter) + 1;
+                juniIndexMap.put(commentWriter, index);
+                return "익명의 쥬니" + index;
+            }
+        }
     }
 
     /**
