@@ -20,3 +20,11 @@
 ## System Architecture
 ![Architecture](https://github.com/whatever-mentoring/juitcy-server/assets/80838501/422f7976-ebb1-4fb5-9903-b682a2321d87)
 
+<br>
+<br>
+
+## Contributors
+|김중현|윤하은|
+|:---:|:---:|
+|<img src="https://github.com/JoongHyun-Kim.png" width="180" height="180" >|<img src="https://github.com/Haeun-Y.png" width="180">|
+| **Backend Developer** | **Backend Developer** |
